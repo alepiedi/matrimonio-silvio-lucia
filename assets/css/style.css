@@ -466,8 +466,9 @@ body.is-open .eyebrow.reveal-hero { transition-delay: .9s; }
   animation: lamp 4s ease-in-out infinite;
 }
 @keyframes lamp { 50% { opacity: .75; } }
-.dots { display: inline-block; animation: dots 1.6s steps(4) infinite; overflow: hidden; vertical-align: bottom; width: 1.1em; }
-@keyframes dots { 0% { width: 0; } 100% { width: 1.1em; } }
+/* larghezza fissa: animo solo la parte visibile, così il titolo non va a capo a intermittenza */
+.dots { display: inline-block; width: 1.1em; animation: dots 1.6s steps(4) infinite; }
+@keyframes dots { 0% { clip-path: inset(0 100% 0 0); } 100% { clip-path: inset(0 0 0 0); } }
 
 .line {
   position: relative;
