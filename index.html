@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Silvio &amp; Lucia · Save the Date</title>
+  <meta name="description" content="Silvio e Lucia si sposano. Estate 2027: segnatevi la data, anzi… grattatela.">
+  <meta name="theme-color" content="#140f0d">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Silvio &amp; Lucia · Save the Date">
+  <meta property="og:description" content="Un filo rosso ci ha portati fin qui. Seguitelo.">
+  <meta property="og:image" content="assets/img/og-image.jpg">
+  <meta property="og:locale" content="it_IT">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Courier+Prime:wght@400;700&family=Pinyon+Script&display=swap">
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/main.js" defer></script>
+</head>
+<body class="is-locked">
+
+  <!-- ============ 0. BUSTA CON SIGILLO ============ -->
+  <div class="intro" id="intro">
+    <div class="envelope">
+      <div class="envelope__pocket"></div>
+      <div class="envelope__flap"></div>
+    </div>
+
+    <div class="intro__address">
+      <span class="intro__to">Una lettera per te da</span>
+      <span class="intro__from"><span data-bind="lui">Silvio</span> &amp; <span data-bind="lei">Lucia</span></span>
+    </div>
+
+    <button class="seal" id="seal" type="button" aria-label="Tieni premuto il sigillo per aprire l'invito">
+      <svg class="seal__ring" viewBox="0 0 200 200" aria-hidden="true">
+        <circle class="seal__ring-track" cx="100" cy="100" r="94" />
+        <circle class="seal__ring-fill" id="sealRing" cx="100" cy="100" r="94" pathLength="1" />
+      </svg>
+      <span class="seal__half seal__half--l" aria-hidden="true"></span>
+      <span class="seal__half seal__half--r" aria-hidden="true"></span>
+    </button>
+
+    <p class="intro__hint" id="introHint">Tieni premuto il sigillo</p>
+  </div>
+
+  <!-- chicchi di riso -->
+  <canvas class="rice" id="rice" aria-hidden="true"></canvas>
+
+  <main id="main">
+    <!-- IL FILO ROSSO: disegnato via JS sopra tutta la pagina -->
+    <svg class="thread" id="thread" aria-hidden="true">
+      <defs>
+        <mask id="threadMask" maskUnits="userSpaceOnUse">
+          <path id="threadMaskPath" fill="none" stroke="#fff" stroke-width="14" stroke-linecap="round" />
+        </mask>
+      </defs>
+      <g mask="url(#threadMask)">
+        <path class="thread__shadow" id="threadShadow" />
+        <path class="thread__base" id="threadBase" />
+        <path class="thread__twist" id="threadTwist" />
+      </g>
+      <circle class="thread__tip" id="threadTip" r="4" />
+    </svg>
+
+    <!-- ============ 1. HERO ============ -->
+    <section class="hero" id="top" data-thread="-0.03,0.34; 0.12,0.40">
+      <canvas class="hero__dust" id="dust" aria-hidden="true"></canvas>
+
+      <p class="eyebrow reveal-hero">Save the date · Estate <span data-bind="anno">2027</span></p>
+
+      <h1 class="hero__names">
+        <span class="name name--lui" data-split data-bind="lui">Silvio</span>
+        <span class="amp" aria-label="e">&amp;</span>
+        <span class="amp__loop" aria-hidden="true" data-thread="0.0,0.9; 0.5,1.0; 0.95,0.55; 0.55,0.0; 0.12,0.4; 0.55,0.95; 1.3,1.0"></span>
+        <span class="name name--lei" data-split data-bind="lei">Lucia</span>
+      </h1>
+
+      <p class="hero__tag reveal-hero">Segnatevi una data.<br><em>Anzi, grattatela.</em></p>
+
+      <a class="scroll-cue reveal-hero" href="#filo" aria-label="Scorri">
+        <span>Seguite il filo</span>
+        <i></i>
+      </a>
+      <span class="hero__exit" data-thread="0.5,0.2; 0.5,1"></span>
+    </section>
+
+    <!-- ============ 2. LA LEGGENDA ============ -->
+    <section class="legend" id="filo" data-thread="0.93,0.05; 0.95,0.5; 0.9,0.95">
+      <p class="kicker">Il filo rosso</p>
+      <p class="legend__text" id="legendText">Un’antica leggenda racconta che chi è destinato a incontrarsi nasce legato da un filo rosso invisibile. Può allungarsi, aggrovigliarsi, tendersi fino all’impossibile — ma non si spezza mai. Il nostro ci ha portati fin qui. Adesso seguitelo voi.</p>
+    </section>
+
+    <!-- ============ 3. CAMERA OSCURA ============ -->
+    <section class="darkroom" id="foto">
+      <div class="darkroom__lamp" aria-hidden="true"></div>
+      <header class="section-head">
+        <p class="kicker">Camera oscura</p>
+        <h2>Sviluppo in corso<span class="dots">…</span></h2>
+        <p class="section-sub">Scorrete piano: i ricordi hanno bisogno di tempo per venire fuori.</p>
+      </header>
+      <div class="line" id="line" data-thread-gallery></div>
+    </section>
+
+    <!-- ============ 4. GRATTA & SPOSA ============ -->
+    <section class="luck" id="data" data-thread="0.985,0.3; 0.5,0.58; 0.015,0.72">
+      <header class="section-head">
+        <p class="kicker">La data</p>
+        <h2>Tentate la fortuna</h2>
+        <p class="section-sub">Prendete una moneta (o usate il dito) e grattate i tre bollini.</p>
+      </header>
+
+      <div class="ticket" id="ticket">
+        <div class="ticket__head">
+          <span class="ticket__serial">Serie S·L — Nº <span data-bind="serial">100727</span></span>
+          <span class="ticket__brand">Gratta <i>&amp;</i> Sposa</span>
+          <span class="ticket__price">Biglietto omaggio · vincita garantita</span>
+        </div>
+
+        <div class="ticket__spots">
+          <div class="spot" data-spot>
+            <div class="spot__prize"><small>giorno</small><strong data-bind="giorno">10</strong><em data-bind="settimana">sabato</em></div>
+            <canvas aria-hidden="true"></canvas>
+          </div>
+          <div class="spot" data-spot>
+            <div class="spot__prize"><small>mese</small><strong data-bind="mese">luglio</strong><em>d’estate</em></div>
+            <canvas aria-hidden="true"></canvas>
+          </div>
+          <div class="spot" data-spot>
+            <div class="spot__prize"><small>anno</small><strong data-bind="anno">2027</strong><em>per sempre</em></div>
+            <canvas aria-hidden="true"></canvas>
+          </div>
+        </div>
+
+        <div class="ticket__win" id="ticketWin" aria-live="polite">
+          <span class="ticket__win-big">Hai vinto!</span>
+          <span class="ticket__win-small">Un invito al nostro matrimonio · <span data-bind="dataLunga">sabato 10 luglio 2027</span></span>
+        </div>
+
+        <p class="ticket__foot">Premio non convertibile in denaro. Valido solo se accompagnato da un sorriso. Gioca con amore.</p>
+      </div>
+
+      <button class="link-btn" type="button" id="revealAll">Niente moneta? Mostratemi la data</button>
+    </section>
+
+    <!-- ============ 5. COUNTDOWN ============ -->
+    <section class="countdown is-locked" id="countdown" data-thread="0.06,0.1; 0.04,0.6; 0.2,1">
+      <p class="kicker">Mancano</p>
+      <div class="cd" aria-live="off">
+        <div class="cd__unit"><span class="cd__num" id="cdD">000</span><small>giorni</small></div>
+        <div class="cd__unit"><span class="cd__num" id="cdH">00</span><small>ore</small></div>
+        <div class="cd__unit"><span class="cd__num" id="cdM">00</span><small>minuti</small></div>
+        <div class="cd__unit"><span class="cd__num" id="cdS">00</span><small>secondi</small></div>
+      </div>
+      <p class="cd__lock">Prima grattate il biglietto ↑</p>
+      <div class="cal-btns">
+        <a class="btn" id="gcal" target="_blank" rel="noopener">Aggiungi a Google Calendar</a>
+        <button class="btn btn--ghost" type="button" id="ics">Apple · Outlook (.ics)</button>
+      </div>
+    </section>
+
+    <!-- ============ 6. CARTOLINA ============ -->
+    <section class="place" id="luogo" data-thread="0.015,0.3; 0.5,0.55; 0.985,0.82">
+      <header class="section-head">
+        <p class="kicker">Il luogo</p>
+        <h2>Vi aspettiamo qui</h2>
+      </header>
+
+      <div class="postcard" id="postcard" tabindex="0" role="button" aria-pressed="false" aria-label="Gira la cartolina">
+        <div class="postcard__inner">
+          <div class="postcard__face postcard__front">
+            <div class="pc-sky" aria-hidden="true">
+              <span class="pc-sun"></span>
+              <svg class="pc-hills" viewBox="0 0 600 200" preserveAspectRatio="none">
+                <path d="M0 120 Q80 70 160 105 T320 95 T470 80 T600 100 V200 H0Z" fill="#c9a36b" opacity=".55"/>
+                <path d="M0 150 Q100 105 210 140 T420 130 T600 140 V200 H0Z" fill="#7d8a4e" opacity=".8"/>
+                <path d="M0 175 Q140 150 290 172 T600 168 V200 H0Z" fill="#4f5b33"/>
+                <g fill="#2f3a22"><path d="M470 168 q4 -46 8 0z"/><path d="M486 170 q4 -58 8 0z"/><path d="M110 176 q4 -40 8 0z"/></g>
+              </svg>
+            </div>
+            <span class="pc-greet">Saluti da</span>
+            <span class="pc-city" data-bind="saluti">Toscana</span>
+            <span class="pc-venue" data-bind="luogoNome">Nome della location</span>
+          </div>
+
+          <div class="postcard__face postcard__back">
+            <div class="pc-msg">
+              <p>Cari amici,</p>
+              <p>qui si mangia bene, si balla fino a tardi e, soprattutto, ci si sposa. Manchi solo tu.</p>
+              <p class="pc-sign"><span data-bind="lui">Silvio</span> &amp; <span data-bind="lei">Lucia</span></p>
+            </div>
+            <div class="pc-side">
+              <div class="pc-stamp" aria-hidden="true"><span>S&amp;L</span><small>2027</small></div>
+              <div class="pc-postmark" aria-hidden="true"><span data-bind="timbro">10 LUG 2027</span></div>
+              <div class="pc-addr">
+                <span data-bind="luogoNome">Nome della location</span>
+                <span data-bind="indirizzo">Indirizzo</span>
+                <span>ore <span data-bind="ora">16:30</span></span>
+              </div>
+              <a class="btn btn--small" data-bind-href="maps" target="_blank" rel="noopener" id="mapsLink">Apri in Maps</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="hint">Toccate la cartolina per girarla</p>
+    </section>
+
+    <!-- ============ 7. RSVP ============ -->
+    <section class="rsvp" id="rsvp" data-thread="0.96,0.05; 0.97,0.55; 0.5,1.02">
+      <header class="section-head">
+        <p class="kicker">R.S.V.P.</p>
+        <h2>Ci sarai?</h2>
+        <p class="section-sub">Fatecelo sapere entro il <strong data-bind="entro">31 marzo 2027</strong>.</p>
+      </header>
+
+      <form class="letter" id="rsvpForm" novalidate>
+        <p class="letter__already" id="rsvpAlready" hidden>Hai già risposto: puoi inviare di nuovo per modificare la tua risposta.</p>
+
+        <fieldset class="choice">
+          <legend class="sr-only">Parteciperai?</legend>
+          <label class="stamp-choice stamp-choice--yes">
+            <input type="radio" name="partecipa" value="si" required>
+            <span>Ci sarò!</span>
+          </label>
+          <label class="stamp-choice stamp-choice--no">
+            <input type="radio" name="partecipa" value="no">
+            <span>Non potrò</span>
+          </label>
+        </fieldset>
+
+        <label class="field">
+          <span>Nome e cognome</span>
+          <input name="nome" type="text" autocomplete="name" required>
+        </label>
+        <label class="field">
+          <span>Email o telefono</span>
+          <input name="contatto" type="text" autocomplete="email" required>
+        </label>
+
+        <div class="if-yes" id="ifYes">
+          <div class="if-yes-inner">
+          <div class="field-row">
+            <label class="field field--small">
+              <span>Quanti sarete?</span>
+              <select name="ospiti">
+                <option value="1">Solo io</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Nomi degli accompagnatori</span>
+              <input name="accompagnatori" type="text">
+            </label>
+          </div>
+          <label class="field">
+            <span>Allergie, intolleranze, menù speciali</span>
+            <input name="allergie" type="text">
+          </label>
+          </div>
+        </div>
+
+        <label class="field">
+          <span>Un pensiero per gli sposi</span>
+          <textarea name="messaggio" rows="3"></textarea>
+        </label>
+
+        <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+        <p class="letter__error" id="rsvpError" role="alert" hidden></p>
+        <button class="btn btn--send" type="submit" id="rsvpSend">Spedisci la risposta</button>
+
+        <div class="postmark" aria-hidden="true">
+          <svg viewBox="0 0 200 200">
+            <defs><path id="pmCircle" d="M100 100 m-72 0 a72 72 0 1 1 144 0 a72 72 0 1 1 -144 0"/></defs>
+            <circle cx="100" cy="100" r="92" fill="none" stroke="currentColor" stroke-width="5"/>
+            <circle cx="100" cy="100" r="58" fill="none" stroke="currentColor" stroke-width="3"/>
+            <text font-size="17" letter-spacing="3" fill="currentColor"><textPath href="#pmCircle">POSTE DEL CUORE · S &amp; L · 2027 ·</textPath></text>
+            <text x="100" y="108" text-anchor="middle" font-size="24" font-weight="700" fill="currentColor">RICEVUTO</text>
+          </svg>
+        </div>
+      </form>
+
+      <div class="rsvp__done" id="rsvpDone" hidden>
+        <p class="rsvp__done-big" id="rsvpDoneBig">Evviva!</p>
+        <p class="rsvp__done-text" id="rsvpDoneText"></p>
+        <button class="link-btn" type="button" id="rsvpAgain">Modifica la risposta</button>
+      </div>
+    </section>
+
+    <!-- ============ 8. IL NODO ============ -->
+    <footer class="finale" id="fine">
+      <svg class="knot" id="knot" viewBox="0 0 240 160" aria-hidden="true" data-thread="0.5,0.52">
+        <path pathLength="1" d="M120 82 C 90 40, 30 30, 34 70 C 38 110, 96 100, 120 82 C 144 64, 202 54, 206 94 C 210 132, 150 124, 120 82" />
+        <path pathLength="1" d="M120 82 C 112 108, 92 132, 70 150" />
+        <path pathLength="1" d="M120 82 C 130 110, 152 130, 176 148" />
+        <circle cx="120" cy="82" r="7" />
+      </svg>
+      <p class="finale__names"><span data-bind="lui">Silvio</span> <i>&amp;</i> <span data-bind="lei">Lucia</span></p>
+      <p class="finale__date" data-bind="dataPunti">10 · 07 · 2027</p>
+      <p class="finale__small">Non vediamo l’ora di festeggiare con voi.</p>
+    </footer>
+  </main>
+</body>
+</html>

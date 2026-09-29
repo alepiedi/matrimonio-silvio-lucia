@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000">
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#f7e6d0"/><stop offset=".55" stop-color="#8fb0d6"/><stop offset="1" stop-color="#34507a"/></linearGradient>
+<radialGradient id="l" cx=".8" cy=".15" r=".6"><stop offset="0" stop-color="#fff6d8" stop-opacity=".9"/><stop offset="1" stop-color="#fff6d8" stop-opacity="0"/></radialGradient>
+</defs>
+<rect width="800" height="1000" fill="url(#g)"/>
+<rect width="800" height="1000" fill="url(#l)"/>
+<g fill="#34507a" opacity=".85">
+<circle cx="320" cy="520" r="78"/><path d="M170 1000 C170 700 230 630 320 630 C410 630 470 700 470 1000Z"/>
+<circle cx="475" cy="560" r="70"/><path d="M335 1000 C335 740 395 665 475 665 C555 665 615 740 615 1000Z"/>
+</g>
+<text x="400" y="170" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="64" fill="#34507a" opacity=".7">Foto 4</text>
+<text x="400" y="220" text-anchor="middle" font-family="Courier New, monospace" font-size="26" letter-spacing="4" fill="#34507a" opacity=".6">SOSTITUISCIMI</text>
+</svg>
