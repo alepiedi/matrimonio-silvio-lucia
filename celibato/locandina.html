@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>L'Ultima Ripetizione · Locandina</title>
+  <!-- Versione stampabile (A4, 2 pagine). Il PDF si rigenera con tools/render.mjs -->
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Courier+Prime:wght@400;700&family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..700&display=swap">
+  <script src="assets/js/config.js"></script>
+  <style>
+    @page { size: A4; margin: 0; }
+    :root { --ink: #0f0d0b; --ink-2: #1b1814; --cream: #f3ead8; --cream-2: #d8ccb4; --muted: #8f8471; --hot: #ff4d2e; --gold: #ffd23f; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: #555; }
+    body { font: 400 11pt/1.45 'DM Sans', sans-serif; color: var(--cream); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .page { width: 210mm; height: 297mm; margin: 0 auto 10mm; position: relative; overflow: hidden; background: var(--ink); }
+    @media print { html, body { background: none; } .page { margin: 0; page-break-after: always; } }
+    .mono { font-family: 'Courier Prime', monospace; }
+    .disp { font-family: 'Anton', Impact, sans-serif; font-weight: 400; text-transform: uppercase; }
+
+    /* ---------- pagina 1: la locandina ---------- */
+    .poster { display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 18mm 16mm 14mm; text-align: center;
+      background:
+        repeating-conic-gradient(from 180deg at 50% -8%, rgba(255, 234, 180, .06) 0 4deg, transparent 4deg 11deg),
+        radial-gradient(ellipse 80% 45% at 50% 40%, rgba(255, 210, 63, .20), transparent 70%),
+        radial-gradient(ellipse 120% 60% at 50% 115%, rgba(255, 77, 46, .35), transparent 60%),
+        var(--ink); }
+    .kicker { font: 700 9pt/1.4 'Courier Prime', monospace; letter-spacing: .2em; text-transform: uppercase; color: var(--cream-2); }
+    .quote { font-style: italic; color: var(--cream-2); font-size: 12pt; max-width: 120mm; margin: 8mm auto 0; }
+    .title { line-height: .84; margin: 0; }
+    .title .l1 { display: block; font-size: 44pt; letter-spacing: .1em; }
+    .title .l2 { display: block; font-size: 88pt; color: var(--hot); text-shadow: 2.5pt 2.5pt 0 var(--ink), 5pt 5pt 0 var(--gold); }
+    .tag { font-size: 16pt; font-style: italic; margin: 6mm 0 0; }
+    .billing { font: 400 8.5pt/1.5 'DM Sans', sans-serif; color: var(--cream-2); letter-spacing: .04em; text-transform: uppercase; max-width: 160mm; border-top: 1px solid rgba(243,234,216,.25); padding-top: 4mm; }
+    .billing b { color: var(--cream); }
+    .stamp { display: inline-block; margin-bottom: 6mm; padding: 3mm 6mm; border: 2.5pt solid var(--gold); color: var(--gold); transform: rotate(-4deg); font: 400 20pt/1 'Anton', sans-serif; text-transform: uppercase; letter-spacing: .04em; }
+    .date { font: 400 26pt/1 'Anton', sans-serif; text-transform: uppercase; letter-spacing: .06em; margin: 0 0 3mm; }
+
+    /* ---------- pagina 2: il pitch ---------- */
+    .sheet { padding: 14mm 15mm 12mm; display: grid; grid-template-rows: auto auto auto auto 1fr; gap: 7mm; }
+    .sheet h2 { font: 400 22pt/1 'Anton', sans-serif; text-transform: uppercase; margin: 0 0 2mm; }
+    .sheet h2 .hot { color: var(--hot); }
+    .lab { font: 700 7.5pt/1 'Courier Prime', monospace; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); margin: 0 0 2.5mm; }
+    .intro p { margin: 0 0 2mm; color: var(--cream-2); font-size: 10.5pt; }
+    .crew { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3mm; }
+    .crew div { border-top: 2pt solid var(--hot); padding-top: 2mm; }
+    .crew b { display: block; font: 400 11.5pt/1.05 'Anton', sans-serif; text-transform: uppercase; }
+    .crew span { font-size: 8pt; color: var(--cream-2); line-height: 1.35; display: block; margin-top: 1mm; }
+    .packs { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; align-content: start; }
+    .pk { border: 1px solid rgba(243,234,216,.2); border-radius: 3mm; padding: 3.5mm 4mm; }
+    .pk.star { background: var(--cream); color: var(--ink); grid-column: span 2; }
+    .pk h3 { font: 400 14pt/1 'Anton', sans-serif; text-transform: uppercase; margin: 0 0 1mm; display: flex; justify-content: space-between; gap: 3mm; }
+    .pk h3 small { font: 700 9.5pt/1.2 'DM Sans', sans-serif; text-transform: none; color: var(--gold); text-align: right; }
+    .pk.star h3 small { color: var(--hot); }
+    .pk ul { margin: 1.5mm 0 0; padding-left: 4mm; font-size: 8.6pt; line-height: 1.4; }
+    .pk.star ul { columns: 2; column-gap: 8mm; }
+    .deliv { display: grid; grid-template-columns: repeat(6, 1fr); gap: 3mm; }
+    .deliv div { border: 1px solid rgba(243,234,216,.2); border-radius: 2mm; padding: 2.5mm; }
+    .deliv b { display: block; font: 400 20pt/1 'Anton', sans-serif; color: var(--hot); }
+    .deliv span { font-size: 8.5pt; display: block; line-height: 1.3; }
+    .foot { align-self: end; display: grid; grid-template-columns: 1.3fr 1fr; gap: 6mm; align-items: end; border-top: 1px solid rgba(243,234,216,.25); padding-top: 5mm; }
+    .foot p { margin: 0; font-size: 9.5pt; color: var(--cream-2); }
+    .foot .cta { font: 400 17pt/1.05 'Anton', sans-serif; text-transform: uppercase; color: var(--cream); margin-bottom: 2mm; }
+    .contact { text-align: right; font: 700 10pt/1.6 'Courier Prime', monospace; color: var(--gold); }
+    .contact .todo { color: var(--hot); }
+
+    /* ---------- anteprima social 1200×630 (?og) ---------- */
+    body.og { background: var(--ink); }
+    body.og .page { display: none; }
+    .ogcard { display: none; }
+    body.og .ogcard { display: flex; width: 1200px; height: 630px; align-items: center; justify-content: center; flex-direction: column; text-align: center; gap: 18px;
+      background:
+        repeating-conic-gradient(from 180deg at 50% -20%, rgba(255, 234, 180, .06) 0 4deg, transparent 4deg 11deg),
+        radial-gradient(ellipse 60% 55% at 50% 45%, rgba(255, 210, 63, .2), transparent 70%),
+        radial-gradient(ellipse 100% 60% at 50% 125%, rgba(255, 77, 46, .4), transparent 60%),
+        var(--ink); }
+    .ogcard .title .l1 { font-size: 64px; }
+    .ogcard .title .l2 { font-size: 150px; text-shadow: 4px 4px 0 var(--ink), 8px 8px 0 var(--gold); }
+    .ogcard .kicker { font-size: 18px; }
+    .ogcard .tag { font-size: 30px; margin: 0; }
+  </style>
+</head>
+<body>
+  <!-- PAGINA 1 -->
+  <section class="page poster">
+    <div>
+      <p class="kicker">Una produzione indipendente degli amici di <span data-f="sposo">Silvio</span></p>
+      <p class="quote">«Hollywood ne ha fatti a decine. L'Italia aspetta ancora il suo.»</p>
+    </div>
+    <div>
+      <h1 class="title disp"><span class="l1">L'Ultima</span><span class="l2">Ripetizione</span></h1>
+      <p class="tag">Un professore. Una palestra. Un'ultima serie prima del «sì».</p>
+    </div>
+    <div>
+      <div class="stamp">Cercasi produttori</div>
+      <p class="date" data-f="riprese">Primavera 2027</p>
+      <p class="billing">
+        Con <b data-f="sposo">Silvio</b> «<span data-f="soprannome">il Prof</span>» ·
+        <b>L'Ingegnere</b> · <b>Il Commercialista</b> · <b>L'Economista</b> · <b>Il Casaro</b><br>
+        Location <b>da decidere</b> · Partner <b>il vostro nome qui</b> · Musiche <b>il coro dello stadio</b>
+      </p>
+    </div>
+  </section>
+
+  <!-- PAGINA 2 -->
+  <section class="page sheet">
+    <div class="intro">
+      <p class="lab">Il progetto</p>
+      <h2>Un addio al celibato girato <span class="hot">come un film.</span></h2>
+      <p><b data-f="sposo">Silvio</b>, docente di scienze motorie e co-titolare di una palestra a Roma Prati, si sposa a luglio 2027. I suoi amici trasformano l'addio al celibato in una commedia: trailer, riprese sui social, aftermovie e titoli di coda.</p>
+      <p>Cerchiamo aziende e strutture che vogliano entrare nel cast con denaro, prodotti, servizi o ospitalità. In cambio: visibilità vera, contenuti da riutilizzare e un report con i numeri.</p>
+    </div>
+
+    <div>
+      <p class="lab">Il cast</p>
+      <div class="crew" id="crew"></div>
+    </div>
+
+    <div>
+      <p class="lab">I pacchetti · valori indicativi</p>
+      <div class="packs" id="packs"></div>
+    </div>
+
+    <div>
+      <p class="lab">Cosa consegniamo</p>
+      <div class="deliv" id="deliv"></div>
+    </div>
+
+    <div class="foot">
+      <div>
+        <p class="cta">Casting sponsor aperto fino al <span id="deadline">31 gennaio 2027</span></p>
+        <p>Brand safe · Accordo scritto · Collaborazioni dichiarate (#adv) · Report finale</p>
+      </div>
+      <div class="contact" id="contact"></div>
+    </div>
+  </section>
+
+  <!-- ANTEPRIMA SOCIAL -->
+  <div class="ogcard">
+    <p class="kicker">Una produzione indipendente degli amici di <span data-f="sposo">Silvio</span></p>
+    <h1 class="title disp"><span class="l1">L'Ultima</span><span class="l2">Ripetizione</span></h1>
+    <p class="tag">Cercasi produttori · <span data-f="riprese">Primavera 2027</span></p>
+  </div>
+
+  <script>
+    (function () {
+      var F = window.FILM || {};
+      var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+      if (/[?&]og\b/.test(location.search)) document.body.classList.add('og');
+
+      document.querySelectorAll('[data-f]').forEach(function (el) {
+        var v = F[el.getAttribute('data-f')];
+        if (v) el.textContent = v;
+      });
+
+      document.getElementById('crew').innerHTML = (F.crew || []).map(function (p) {
+        return '<div><b>' + esc(p.ruolo) + '</b><span>' + esc(p.garanzia) + '</span></div>';
+      }).join('');
+
+      document.getElementById('packs').innerHTML = (F.pacchetti || []).map(function (p) {
+        var items = p.evidenza ? p.include : p.include.slice(0, 3);
+        return '<div class="pk' + (p.evidenza ? ' star' : '') + '"><h3>' + esc(p.nome) + '<small>' + esc(p.valore) + '</small></h3>' +
+          '<ul>' + items.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';
+      }).join('');
+
+      document.getElementById('deliv').innerHTML = (F.consegne || []).map(function (c) {
+        return '<div><b>' + esc(c.n) + '</b><span><strong>' + esc(c.cosa) + '</strong><br>' + esc(c.dettaglio) + '</span></div>';
+      }).join('');
+
+      if (F.chiusuraCasting) {
+        var d = new Date(F.chiusuraCasting);
+        if (!isNaN(d)) document.getElementById('deadline').textContent = d.toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Rome' });
+      }
+
+      var C = F.contatti || {};
+      var lines = [];
+      if (C.email) lines.push(esc(C.email));
+      if (C.whatsapp) lines.push('+' + esc(C.whatsapp.replace(/^(\d{2})(\d{3})(\d+)$/, '$1 $2 $3')));
+      if (C.instagram) lines.push('@' + esc(C.instagram));
+      document.getElementById('contact').innerHTML = lines.length
+        ? lines.join('<br>')
+        : '<span class="todo">⚠ Inserire i contatti in config.js</span>';
+    })();
+  </script>
+</body>
+</html>

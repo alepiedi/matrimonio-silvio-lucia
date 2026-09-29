@@ -68,6 +68,10 @@ python3 -m http.server 8000
 # poi aprite http://localhost:8000
 ```
 
+## 🎬 Addio al celibato
+
+Nella cartella [`celibato/`](celibato/) c'è *L'Ultima Ripetizione*: il kit per cercare sponsor per l'addio al celibato di Silvio (sito da mandare alle aziende, locandina PDF, messaggi, accordo). Istruzioni in [`celibato/README.md`](celibato/README.md).
+
 ## Struttura
 
 ```
