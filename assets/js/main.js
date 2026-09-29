@@ -746,7 +746,22 @@
   /* ------------------------------------------------------------------
      Avvio
      ------------------------------------------------------------------ */
+  /* L'altezza della prima schermata si fissa una volta sola: sui telefoni la barra
+     del browser compare e scompare scorrendo e farebbe sobbalzare tutta la pagina. */
+  function lockHeroHeight() {
+    const hero = $('.hero');
+    let lastW = 0;
+    const lock = () => {
+      if (innerWidth === lastW) return; // cambia solo l'altezza: è la barra del browser
+      lastW = innerWidth;
+      hero.style.minHeight = innerHeight + 'px';
+    };
+    lock();
+    addEventListener('resize', lock);
+  }
+
   function init() {
+    lockHeroHeight();
     bindConfig();
     splitLetters();
     const legendUpdate = legend();
