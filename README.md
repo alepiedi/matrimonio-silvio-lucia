@@ -35,7 +35,7 @@ Niente framework e niente build: HTML, CSS e JavaScript puri. Funziona anche con
 3. Per le lettere della cartolina potete usare una foto panoramica del luogo (`luogo.foto`).
 
 ### Anteprima su WhatsApp
-`assets/img/og-image.jpg` è l'immagine che appare quando si condivide il link. Dopo la pubblicazione, in `index.html` sostituite `og:image` con l'URL **completo**, per esempio `https://<utente>.github.io/matrimonio-silvio-lucia/assets/img/og-image.jpg`: WhatsApp non legge i percorsi relativi.
+`assets/img/og-image.jpg` è l'immagine che appare quando si condivide il link. È collegata tramite l'URL completo in `index.html` (`og:image`). Se cambiate indirizzo del sito, aggiornate anche quello.
 
 ---
 
@@ -57,7 +57,7 @@ Se `endpoint` è vuoto ma `rsvp.email` è compilato, il sito apre l'app di posta
 
 1. Su GitHub: **Settings → Pages**
 2. *Source*: "Deploy from a branch", scegliete il branch e la cartella `/ (root)`
-3. Dopo circa un minuto il sito è online su `https://<utente>.github.io/matrimonio-silvio-lucia/`
+3. Dopo circa un minuto il sito è online su **https://alepiedi.github.io/matrimonio-silvio-lucia/**
 
 Potete collegare un dominio personalizzato (es. `silvioelucia.it`) dalla stessa pagina.
 
