@@ -11,7 +11,8 @@
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const TZ = 'Europe/Rome';
 
-  const weddingDate = new Date(W.data);
+  const hasTime = /^\d{1,2}:\d{2}$/.test(W.orario || '');
+  const weddingDate = new Date(`${W.data}T${hasTime ? W.orario.padStart(5, '0') : '00:00'}:00+02:00`);
   const fmt = (opts) => new Intl.DateTimeFormat('it-IT', { timeZone: TZ, ...opts }).format(weddingDate);
 
   /* ------------------------------------------------------------------
@@ -22,7 +23,6 @@
     const giorno = fmt({ day: 'numeric' });
     const meseNum = pad(fmt({ month: 'numeric' }));
     const anno = fmt({ year: 'numeric' });
-    const entro = new Date(W.rsvp.entro + 'T12:00:00');
 
     const values = {
       lui: W.lui,
@@ -39,9 +39,14 @@
       saluti: W.luogo.saluti,
       salutiDa: W.luogo.salutiDa || 'Saluti da',
       luogoNome: W.luogo.nome,
+      citta: W.luogo.citta || W.luogo.indirizzo,
       indirizzo: W.luogo.indirizzo,
-      entro: new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'long', year: 'numeric' }).format(entro),
+      entro: W.rsvp.entro
+        ? new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(W.rsvp.entro + 'T12:00:00'))
+        : null,
     };
+    if (!hasTime) $('#pcOra').remove();
+    if (!W.rsvp.entro) $('#rsvpBy').textContent = 'Fatecelo sapere appena potete.';
 
     $$('[data-bind]').forEach((el) => {
       const v = values[el.dataset.bind];
@@ -588,12 +593,18 @@
     const start = weddingDate;
     const end = new Date(start.getTime() + (W.durataOre || 8) * 36e5);
     const stamp = (d) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+    // senza orario: evento di tutto il giorno
+    const day = W.data.replace(/-/g, '');
+    const [y, m, d] = W.data.split('-').map(Number);
+    const nextDay = new Date(Date.UTC(y, m - 1, d + 1)).toISOString().slice(0, 10).replace(/-/g, '');
+    const gDates = hasTime ? `${stamp(start)}/${stamp(end)}` : `${day}/${nextDay}`;
+    const icsDates = hasTime ? [`DTSTART:${stamp(start)}`, `DTEND:${stamp(end)}`] : [`DTSTART;VALUE=DATE:${day}`, `DTEND;VALUE=DATE:${nextDay}`];
     const title = `Matrimonio di ${W.lui} & ${W.lei}`;
     const place = `${W.luogo.nome}, ${W.luogo.indirizzo}`;
     const details = `Save the date! Conferma la tua presenza su ${location.href.split('#')[0]}`;
 
     $('#gcal').href = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
-      + `&text=${encodeURIComponent(title)}&dates=${stamp(start)}/${stamp(end)}`
+      + `&text=${encodeURIComponent(title)}&dates=${gDates}`
       + `&details=${encodeURIComponent(details)}&location=${encodeURIComponent(place)}`;
 
     $('#ics').addEventListener('click', () => {
@@ -603,7 +614,7 @@
         'BEGIN:VEVENT',
         `UID:${stamp(start)}-matrimonio@silvio-lucia`,
         `DTSTAMP:${stamp(new Date())}`,
-        `DTSTART:${stamp(start)}`, `DTEND:${stamp(end)}`,
+        ...icsDates,
         `SUMMARY:${esc(title)}`, `LOCATION:${esc(place)}`, `DESCRIPTION:${esc(details)}`,
         'BEGIN:VALARM', 'TRIGGER:-P7D', 'ACTION:DISPLAY', `DESCRIPTION:${esc(title)}`, 'END:VALARM',
         'END:VEVENT', 'END:VCALENDAR',

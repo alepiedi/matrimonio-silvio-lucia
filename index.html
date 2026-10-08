@@ -196,7 +196,7 @@
             </div>
             <span class="pc-greet" data-bind="salutiDa">Saluti dalle</span>
             <span class="pc-city" data-bind="saluti">Case Gialle</span>
-            <span class="pc-venue" data-bind="luogoNome">Le Case Gialle</span>
+            <span class="pc-venue" data-bind="citta">Melizzano</span>
             <span class="pc-turn" aria-hidden="true">girami ↻</span>
           </div>
 
@@ -211,8 +211,8 @@
               <div class="pc-postmark" aria-hidden="true"><span data-bind="timbro">17 LUG 2027</span></div>
               <div class="pc-addr">
                 <span data-bind="luogoNome">Le Case Gialle</span>
-                <span data-bind="indirizzo">Indirizzo da confermare</span>
-                <span>ore <span data-bind="ora">16:30</span></span>
+                <span data-bind="indirizzo">Melizzano (BN)</span>
+                <span id="pcOra">ore <span data-bind="ora">16:30</span></span>
               </div>
               <a class="btn btn--small" data-bind-href="maps" target="_blank" rel="noopener" id="mapsLink">Apri in Maps</a>
             </div>
@@ -227,7 +227,7 @@
       <header class="section-head">
         <p class="kicker">R.S.V.P.</p>
         <h2>Ci sarai?</h2>
-        <p class="section-sub">Fatecelo sapere entro il <strong data-bind="entro">31 marzo 2027</strong>.</p>
+        <p class="section-sub" id="rsvpBy">Fatecelo sapere entro il <strong data-bind="entro">31 marzo 2027</strong>.</p>
       </header>
 
       <form class="letter" id="rsvpForm" novalidate>

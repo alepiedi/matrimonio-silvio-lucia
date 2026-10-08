@@ -6,25 +6,27 @@ window.WEDDING = {
   lui: 'Silvio',
   lei: 'Lucia',
 
-  // Data e ora della cerimonia, in ora italiana (+02:00 = ora legale estiva).
-  // ⚠️ L'orario 16:30 è ancora da confermare.
-  data: '2027-07-17T16:30:00+02:00',
-  durataOre: 10, // usata per l'evento in calendario
+  // Data del matrimonio (anno-mese-giorno)
+  data: '2027-07-17',
+  // Orario della cerimonia, es. '16:30'. Vuoto = non viene mostrato
+  // (e in calendario l'evento dura tutto il giorno).
+  orario: '',
+  durataOre: 10, // durata dell'evento in calendario, solo se c'è l'orario
 
   luogo: {
     // Cartolina: frase piccola in corsivo + scritta gigante (ogni parola va su una riga)
     salutiDa: 'Saluti dalle',
     saluti: 'Case Gialle',
     nome: 'Le Case Gialle',
-    // ⚠️ Indirizzo e link Maps ancora da confermare
-    indirizzo: 'Indirizzo da confermare',
-    maps: 'https://www.google.com/maps/search/?api=1&query=Le+Case+Gialle',
+    citta: 'Melizzano',
+    indirizzo: 'Melizzano (BN)',
+    maps: 'https://www.google.com/maps/search/?api=1&query=Le+Case+Gialle+Melizzano',
     // Immagine che riempie le lettere della cartolina (panorama del luogo)
     foto: 'assets/img/luogo.svg',
   },
 
   rsvp: {
-    entro: '2027-03-31', // data limite per rispondere
+    entro: '', // data limite per rispondere, es. '2027-03-31'. Vuoto = nessuna scadenza
     // Dove arrivano le risposte (vedi README):
     //  - URL Formspree, es. 'https://formspree.io/f/abcdwxyz'
     //  - oppure URL di uno script Google (risposte in un Foglio Google)
@@ -35,11 +37,12 @@ window.WEDDING = {
 
   // Foto appese al filo rosso (consigliato: 6–8 foto verticali, ~1000px di lato lungo)
   foto: [
-    { src: 'assets/img/photos/foto-1.svg', didascalia: 'Il primo incontro' },
-    { src: 'assets/img/photos/foto-2.svg', didascalia: 'Il primo viaggio' },
-    { src: 'assets/img/photos/foto-3.svg', didascalia: 'Casa nostra' },
-    { src: 'assets/img/photos/foto-4.svg', didascalia: 'Quella volta al mare' },
-    { src: 'assets/img/photos/foto-5.svg', didascalia: 'Il sì' },
-    { src: 'assets/img/photos/foto-6.svg', didascalia: 'Prossimamente…' },
+    { src: 'assets/img/photos/01-prime-foto-2019.jpg', didascalia: 'Una delle prime, 2019' },
+    { src: 'assets/img/photos/02-primo-viaggio.jpg', didascalia: 'Il primo viaggio' },
+    { src: 'assets/img/photos/03-i-nostri-viaggi.jpg', didascalia: 'I nostri viaggi' },
+    { src: 'assets/img/photos/04-al-mare.jpg', didascalia: 'Al mare' },
+    { src: 'assets/img/photos/05-casa-nostra.jpg', didascalia: 'Casa nostra' },
+    { src: 'assets/img/photos/06-con-charlino.jpg', didascalia: 'Con Charlino' },
+    { src: 'assets/img/photos/07-il-si.jpg', didascalia: 'Il sì' },
   ],
 };
