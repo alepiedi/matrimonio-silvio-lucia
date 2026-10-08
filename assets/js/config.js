@@ -7,16 +7,18 @@ window.WEDDING = {
   lei: 'Lucia',
 
   // Data e ora della cerimonia, in ora italiana (+02:00 = ora legale estiva).
-  // ⚠️ SEGNAPOSTO: sostituire con la data definitiva di luglio 2027.
-  data: '2027-07-10T16:30:00+02:00',
+  // ⚠️ L'orario 16:30 è ancora da confermare.
+  data: '2027-07-17T16:30:00+02:00',
   durataOre: 10, // usata per l'evento in calendario
 
   luogo: {
-    // La parola gigante sulla cartolina "Saluti da ..." (meglio corta: 5–9 lettere)
-    saluti: 'Toscana',
-    nome: 'Nome della location',
-    indirizzo: 'Via dell\'Esempio 1, 50100 Firenze (FI)',
-    maps: 'https://www.google.com/maps/search/?api=1&query=Firenze',
+    // Cartolina: frase piccola in corsivo + scritta gigante (ogni parola va su una riga)
+    salutiDa: 'Saluti dalle',
+    saluti: 'Case Gialle',
+    nome: 'Le Case Gialle',
+    // ⚠️ Indirizzo e link Maps ancora da confermare
+    indirizzo: 'Indirizzo da confermare',
+    maps: 'https://www.google.com/maps/search/?api=1&query=Le+Case+Gialle',
     // Immagine che riempie le lettere della cartolina (panorama del luogo)
     foto: 'assets/img/luogo.svg',
   },

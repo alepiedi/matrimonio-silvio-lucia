@@ -37,6 +37,7 @@
       ora: fmt({ hour: '2-digit', minute: '2-digit' }),
       serial: `${pad(giorno)}${meseNum}${anno.slice(2)}`,
       saluti: W.luogo.saluti,
+      salutiDa: W.luogo.salutiDa || 'Saluti da',
       luogoNome: W.luogo.nome,
       indirizzo: W.luogo.indirizzo,
       entro: new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'long', year: 'numeric' }).format(entro),
@@ -54,8 +55,14 @@
     if (W.luogo.foto) $('.pc-city').style.backgroundImage = `url("${new URL(W.luogo.foto, location.href).href}")`;
 
     // parola più lunga → riduco un po' il font della cartolina
-    const len = W.luogo.saluti.length;
-    if (len > 8) $('.pc-city').style.fontSize = `min(${(88 / len).toFixed(1)}vw, ${(62 / len).toFixed(2)}rem)`;
+    // ogni parola su una riga; la dimensione dipende dalla parola più lunga
+    const city = $('.pc-city');
+    const words = W.luogo.saluti.trim().split(/\s+/);
+    city.innerHTML = words.map((w) => `<span>${w}</span>`).join('');
+    city.setAttribute('aria-label', W.luogo.saluti);
+    city.classList.toggle('pc-city--multi', words.length > 1);
+    const len = Math.max(...words.map((w) => w.length));
+    if (len > 8) city.style.fontSize = `min(${(88 / len).toFixed(1)}vw, ${(62 / len).toFixed(2)}rem)`;
   }
 
   /* ------------------------------------------------------------------
@@ -661,8 +668,6 @@
         partecipa: answer === 'si' ? 'Sì' : 'No',
         nome: fd.get('nome').trim(),
         contatto: fd.get('contatto').trim(),
-        ospiti: answer === 'si' ? fd.get('ospiti') : '0',
-        accompagnatori: answer === 'si' ? fd.get('accompagnatori') : '',
         allergie: answer === 'si' ? fd.get('allergie') : '',
         messaggio: fd.get('messaggio'),
         inviato: new Date().toLocaleString('it-IT', { timeZone: TZ }),

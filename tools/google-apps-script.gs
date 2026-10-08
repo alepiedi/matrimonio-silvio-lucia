@@ -10,7 +10,7 @@
  *  4. Autorizza, copia l'URL che termina con /exec e incollalo in
  *     assets/js/config.js → rsvp.endpoint
  */
-const COLONNE = ['inviato', 'partecipa', 'nome', 'contatto', 'ospiti', 'accompagnatori', 'allergie', 'messaggio'];
+const COLONNE = ['inviato', 'partecipa', 'nome', 'contatto', 'allergie', 'messaggio'];
 
 function doPost(e) {
   const lock = LockService.getScriptLock();
