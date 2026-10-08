@@ -10,7 +10,7 @@ window.WEDDING = {
   data: '2027-07-17',
   // Orario della cerimonia, es. '16:30'. Vuoto = non viene mostrato
   // (e in calendario l'evento dura tutto il giorno).
-  orario: '',
+  orario: '17:30',
   durataOre: 10, // durata dell'evento in calendario, solo se c'è l'orario
 
   luogo: {

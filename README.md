@@ -24,7 +24,7 @@ Niente framework e niente build: HTML, CSS e JavaScript puri. Funziona anche con
 
 **Si modifica solo `assets/js/config.js`**:
 
-- `data` → data del matrimonio (sabato 17 luglio 2027); `orario` vuoto = non mostrato
+- `data` → data del matrimonio (sabato 17 luglio 2027); `orario` → ora della cerimonia (17:30), vuoto = non mostrato
 - `luogo` → parola della cartolina (`saluti`), nome della location, indirizzo, link Maps
 - `rsvp.entro` → data limite per rispondere (vuoto = "Fatecelo sapere appena potete")
 - `foto` → elenco foto e didascalie
