@@ -30,7 +30,7 @@ window.WEDDING = {
     // Dove arrivano le risposte (vedi README):
     //  - URL Formspree, es. 'https://formspree.io/f/abcdwxyz'
     //  - oppure URL di uno script Google (risposte in un Foglio Google)
-    endpoint: '',
+    endpoint: 'https://script.google.com/macros/s/AKfycby6fxCjj7KDb2L_hoBZQtLxvL-ziV8XD9g_8pcaHFuyJYeIx3kE9LmkcH8T5a26oR2m/exec',
     // Se endpoint è vuoto, la risposta viene preparata come email a questo indirizzo
     email: '',
   },
