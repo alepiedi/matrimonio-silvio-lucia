@@ -24,7 +24,7 @@ Niente framework e niente build: HTML, CSS e JavaScript puri. Funziona anche con
 
 **Si modifica solo `assets/js/config.js`**:
 
-- `data` → data e ora della cerimonia (⚠️ ora è un **segnaposto**: sabato 10 luglio 2027, 16:30)
+- `data` → data e ora della cerimonia (sabato 17 luglio 2027; l'orario 16:30 è ancora da confermare)
 - `luogo` → parola della cartolina (`saluti`), nome della location, indirizzo, link Maps
 - `rsvp.entro` → data limite per rispondere
 - `foto` → elenco foto e didascalie
