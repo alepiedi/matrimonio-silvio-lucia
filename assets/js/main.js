@@ -12,6 +12,44 @@
   const TZ = 'Europe/Rome';
 
   const hasTime = /^\d{1,2}:\d{2}$/.test(W.orario || '');
+  // Ultimo scroll dell'utente: serve a capire quando è fermo e va "invitato" a scendere
+  let lastScroll = 0;
+  addEventListener('scroll', () => (lastScroll = performance.now()), { passive: true });
+  const idleFor = () => performance.now() - lastScroll;
+
+  /* Scorrimento lento e morbido (anche su iPhone), interrotto appena l'utente tocca o scorre da sé */
+  const Glide = (() => {
+    let raf = 0, active = false;
+    const root = document.documentElement;
+    const stop = () => {
+      if (!active) return;
+      cancelAnimationFrame(raf);
+      active = false;
+      root.style.scrollBehavior = '';
+    };
+    ['wheel', 'touchstart', 'keydown'].forEach((ev) => addEventListener(ev, stop, { passive: true }));
+    return {
+      get active() { return active; },
+      stop,
+      to(y, dur = 1400) {
+        stop();
+        y = Math.max(0, Math.min(y, root.scrollHeight - innerHeight));
+        if (reduced) return scrollTo(0, y);
+        const y0 = scrollY, dy = y - y0, t0 = performance.now();
+        active = true;
+        root.style.scrollBehavior = 'auto'; // altrimenti "scroll-behavior: smooth" rallenta ogni passo
+        const step = (now) => {
+          if (!active) return;
+          const p = Math.min(1, (now - t0) / dur);
+          const e = p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+          scrollTo(0, y0 + dy * e);
+          if (p < 1) raf = requestAnimationFrame(step); else stop();
+        };
+        raf = requestAnimationFrame(step);
+      },
+    };
+  })();
+
   const weddingDate = new Date(`${W.data}T${hasTime ? W.orario.padStart(5, '0') : '00:00'}:00+02:00`);
   const fmt = (opts) => new Intl.DateTimeFormat('it-IT', { timeZone: TZ, ...opts }).format(weddingDate);
 
@@ -397,7 +435,10 @@
       const doc = document.documentElement;
       if (scrollY + innerHeight >= doc.scrollHeight - 4) return total;
       const mainTop = main.getBoundingClientRect().top + scrollY;
-      const tipY = scrollY + innerHeight * 0.62 - mainTop;
+      // la punta sta in basso nello schermo; se si resta fermi, il filo "tira" verso giù
+      const idle = idleFor() > 1800 && !Glide.active;
+      const tug = idle ? 0.09 * (0.5 - 0.5 * Math.cos(performance.now() / 380)) : 0;
+      const tipY = scrollY + innerHeight * (0.74 + tug) - mainTop;
       // primo campione oltre la "linea di lettura"
       let lo = 0, hi = maxY.length - 1;
       while (lo < hi) { const m = (lo + hi) >> 1; if (maxY[m] > tipY) hi = m; else lo = m + 1; }
@@ -632,9 +673,34 @@
      ------------------------------------------------------------------ */
   function postcard() {
     const pc = $('#postcard');
-    const flip = () => {
+    const inner = $('.postcard__inner', pc);
+    const hint = $('#postcardHint');
+    const hintFront = hint.innerHTML;
+    let busy = false;
+
+    const swap = () => {
       const on = pc.classList.toggle('is-flipped');
       pc.setAttribute('aria-pressed', String(on));
+      hint.innerHTML = on
+        ? '<span class="hint__icon" aria-hidden="true">↺</span> Toccate di nuovo la cartolina per tornare davanti'
+        : hintFront;
+    };
+
+    // Niente "retro" 3D (su iPhone faceva vedere le scritte a specchio): la cartolina ruota
+    // fino a mettersi di taglio, a metà giro cambia faccia, poi si raddrizza dall'altro lato.
+    const flip = () => {
+      if (busy) return;
+      if (reduced) return swap();
+      busy = true;
+      pc.classList.add('is-turning');
+      setTimeout(() => {
+        swap();
+        pc.classList.add('is-landing');
+        pc.classList.remove('is-turning');
+        void inner.offsetWidth;
+        pc.classList.remove('is-landing');
+        setTimeout(() => (busy = false), 520);
+      }, 300);
     };
     pc.addEventListener('click', (e) => { if (!e.target.closest('a')) flip(); });
     pc.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); } });
@@ -743,6 +809,42 @@
   }
 
   /* ------------------------------------------------------------------
+     Guida a scendere: pulsante "Scorri" e prima discesa automatica
+     ------------------------------------------------------------------ */
+  function guide() {
+    const btn = $('#guide');
+    const stops = ['#filo', '#foto', '#data', '#countdown', '#luogo', '#rsvp', '#fine'].map((s) => $(s));
+    const top = (el) => el.getBoundingClientRect().top + scrollY;
+
+    btn.addEventListener('click', () => {
+      const next = stops.find((el) => top(el) > scrollY + 40);
+      if (!next) return;
+      const dist = Math.abs(top(next) - scrollY);
+      Glide.to(top(next) - 8, clamp(dist * 1.1, 900, 2200));
+    });
+
+    let typing = false;
+    document.addEventListener('focusin', (e) => (typing = /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)));
+    document.addEventListener('focusout', () => (typing = false));
+
+    const update = () => {
+      const open = document.body.classList.contains('is-open');
+      const idle = idleFor() > 1500 && !Glide.active;
+      const nearEnd = scrollY + innerHeight > document.documentElement.scrollHeight - innerHeight * 0.5;
+      btn.classList.toggle('is-visible', open && (idle || scrollY < 10) && !nearEnd && !typing);
+      document.body.classList.toggle('is-idle', open && idle && !nearEnd);
+    };
+
+    // La prima volta, se nessuno scorre, il sito scende da solo seguendo il filo fino alla leggenda
+    const autoStart = () => {
+      setTimeout(() => {
+        if (scrollY < 5 && !Glide.active) Glide.to(top(stops[0]) - 8, 2600);
+      }, 3200);
+    };
+    return { update, autoStart };
+  }
+
+  /* ------------------------------------------------------------------
      Comparse allo scroll
      ------------------------------------------------------------------ */
   function reveals() {
@@ -783,6 +885,7 @@
     const legendUpdate = legend();
     const swayUpdate = gallery();
     const T = thread();
+    const G = guide();
     dust();
     scratchCards(() => $('#countdown').classList.remove('is-locked'));
     countdown();
@@ -795,12 +898,14 @@
       legendUpdate();
       swayUpdate();
       T.update();
+      G.update();
       requestAnimationFrame(loop);
     };
 
     intro(() => {
       T.build();
       requestAnimationFrame(loop);
+      G.autoStart();
     });
   }
 

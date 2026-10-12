@@ -424,6 +424,39 @@ body.is-open .eyebrow.reveal-hero { transition-delay: .9s; }
   50% { transform: scaleY(1); }
   100% { transform: scaleY(1); opacity: 0; }
 }
+/* pulsante "Scorri": compare quando si resta fermi */
+.guide {
+  position: fixed;
+  left: 50%;
+  bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+  z-index: 120;
+  display: inline-flex; align-items: center; gap: .7em;
+  padding: .85em 1.25em .85em 1.5em;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--paper);
+  font-family: var(--f-type);
+  font-size: .78rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  box-shadow: 0 10px 26px rgba(30, 42, 27, .35), 0 0 0 4px rgba(253, 251, 244, .55);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  opacity: 0;
+  transform: translate(-50%, 20px);
+  pointer-events: none;
+  transition: opacity .45s ease, transform .45s var(--ease-out);
+}
+.guide.is-visible { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+.guide i { font-style: normal; font-size: 1.25em; letter-spacing: 0; display: inline-block; animation: guideBounce 1.3s ease-in-out infinite; }
+@keyframes guideBounce { 0%, 100% { transform: translateY(-2px); } 50% { transform: translateY(4px); } }
+
+/* punta del filo che pulsa quando si è fermi */
+.thread__tip { transform-box: fill-box; transform-origin: center; }
+body.is-idle .thread__tip { animation: tipPulse 1.3s ease-in-out infinite; }
+@keyframes tipPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.8); } }
+
 .hero__exit { position: absolute; right: 8%; bottom: 0; width: 1px; height: 30%; }
 
 /* ==========================================================================
@@ -757,17 +790,22 @@ body.is-open .eyebrow.reveal-hero { transition-delay: .9s; }
 }
 .postcard__inner {
   position: absolute; inset: 0;
-  transform-style: preserve-3d;
-  transition: transform 1.3s var(--ease-out);
+  transition: transform .55s var(--ease-out);
   transform: rotate(1.5deg);
 }
-.postcard.is-flipped .postcard__inner { transform: rotate(-1deg) rotateY(180deg); }
-.postcard:hover:not(.is-flipped) .postcard__inner { transform: rotate(0deg) rotateY(-8deg); }
+.postcard.is-flipped .postcard__inner { transform: rotate(-1deg); }
+@media (hover: hover) {
+  .postcard:not(.is-flipped):not(.is-turning):hover .postcard__inner { transform: rotate(0deg) rotateY(-8deg); }
+}
+/* giro in due tempi: si mette di taglio, cambia faccia, si raddrizza */
+.postcard.is-turning .postcard__inner { transform: rotate(0deg) rotateY(90deg); transition: transform .3s cubic-bezier(.55, 0, .85, .35); }
+.postcard.is-landing .postcard__inner { transform: rotate(0deg) rotateY(-90deg); transition: none; }
+.postcard__back { visibility: hidden; }
+.postcard.is-flipped .postcard__back { visibility: visible; }
+.postcard.is-flipped .postcard__front { visibility: hidden; }
 
 .postcard__face {
   position: absolute; inset: 0;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
   border-radius: 6px;
   overflow: hidden;
   box-shadow: 0 30px 60px -18px rgba(60,30,10,.5), 0 0 0 1px rgba(0,0,0,.06);
@@ -837,7 +875,6 @@ body.is-open .eyebrow.reveal-hero { transition-delay: .9s; }
 }
 
 .postcard__back {
-  transform: rotateY(180deg);
   background:
     repeating-linear-gradient(0deg, transparent 0 31px, rgba(90,60,30,.06) 31px 32px),
     #fbf5e8;
