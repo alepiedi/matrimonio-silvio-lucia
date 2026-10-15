@@ -22,8 +22,8 @@ const EMAIL_SPOSI = ['indirizzo-silvio@esempio.it', 'indirizzo-lucia@esempio.it'
 
 const SCHEDA_RISPOSTE = 'Risposte';
 const SCHEDA_RIEPILOGO = 'Riepilogo';
-const COLONNE = ['inviato', 'partecipa', 'nome', 'contatto', 'allergie', 'messaggio'];
-const INTESTAZIONI = ['Inviato il', 'Partecipa', 'Nome e cognome', 'Email o telefono', 'Allergie / intolleranze', 'Messaggio per gli sposi'];
+const COLONNE = ['inviato', 'partecipa', 'nome', 'contatto', 'allergie', 'messaggio', 'filo'];
+const INTESTAZIONI = ['Inviato il', 'Partecipa', 'Nome e cognome', 'Email o telefono', 'Allergie / intolleranze', 'Messaggio per gli sposi', 'Sul "filo di tutti"'];
 
 /** Da eseguire una volta a mano: prepara le schede e chiede le autorizzazioni. */
 function setup() {
@@ -46,6 +46,7 @@ function doPost(e) {
     if (p._gotcha) return json_({ ok: true }); // trappola anti-spam
     // l'ora di invio la mette il foglio (vera data, ordinabile); il resto arriva dal sito
     sheet.appendRow(COLONNE.map((c) => (c === 'inviato' ? new Date() : testo_(p[c]))));
+    CacheService.getScriptCache().remove('filo'); // il nuovo nome compare subito sul filo
   } finally {
     lock.releaseLock();
   }
@@ -58,9 +59,50 @@ function doPost(e) {
   return json_({ ok: true });
 }
 
-/** Aprendo l'URL /exec nel browser si vede questo: utile per controllare che funzioni. */
-function doGet() {
+/**
+ * GET:
+ *  - ?azione=filo&callback=fn → nomi di chi ha confermato, per "Il filo di tutti" sul sito
+ *    (solo nome e iniziale del cognome, solo chi ha dato il consenso)
+ *  - senza parametri → messaggio di controllo, utile aprendo l'URL /exec nel browser
+ */
+function doGet(e) {
+  const p = (e && e.parameter) || {};
+  if (p.azione === 'filo') {
+    const body = JSON.stringify({ nomi: nomiSulFilo_() });
+    if (p.callback && /^[A-Za-z_$][\w$]{0,40}$/.test(p.callback)) {
+      return ContentService.createTextOutput(`${p.callback}(${body});`).setMimeType(ContentService.MimeType.JAVASCRIPT);
+    }
+    return ContentService.createTextOutput(body).setMimeType(ContentService.MimeType.JSON);
+  }
   return ContentService.createTextOutput('RSVP di Silvio & Lucia: attivo ✔');
+}
+
+/** Per ogni nome vale l'ultima risposta: se uno cambia idea e risponde "No", sparisce dal filo. */
+function nomiSulFilo_() {
+  const cache = CacheService.getScriptCache();
+  const cached = cache.get('filo');
+  if (cached) return JSON.parse(cached);
+
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SCHEDA_RISPOSTE);
+  if (!sheet || sheet.getLastRow() < 2) return [];
+  const righe = sheet.getRange(2, 1, sheet.getLastRow() - 1, COLONNE.length).getValues();
+  const iPart = COLONNE.indexOf('partecipa'), iNome = COLONNE.indexOf('nome'), iFilo = COLONNE.indexOf('filo');
+  const ultima = new Map();
+  righe.forEach((r) => {
+    const nome = String(r[iNome] || '').trim();
+    if (!nome) return;
+    ultima.set(nome.toLowerCase().replace(/\s+/g, ' '), { nome, si: r[iPart] === 'Sì', filo: r[iFilo] === 'Sì' }); // solo chi ha dato il consenso
+  });
+  const nomi = [...new Set([...ultima.values()].filter((v) => v.si && v.filo).map((v) => breve_(v.nome)))];
+  cache.put('filo', JSON.stringify(nomi), 60); // un minuto: il sito resta veloce anche con tanti invitati
+  return nomi;
+}
+
+/** "mario rossi" → "Mario R." */
+function breve_(nome) {
+  const parti = nome.split(/\s+/);
+  const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+  return parti.length > 1 ? `${cap(parti[0])} ${parti[parti.length - 1].charAt(0).toUpperCase()}.` : cap(parti[0]);
 }
 
 /* ----------------------------------------------------------------------- */
@@ -71,6 +113,9 @@ function preparaRisposte_(ss) {
     const prima = ss.getSheets()[0];
     // riusa il primo foglio se è ancora vuoto ("Foglio1")
     sheet = prima.getLastRow() === 0 && !ss.getSheetByName(SCHEDA_RIEPILOGO) ? prima.setName(SCHEDA_RISPOSTE) : ss.insertSheet(SCHEDA_RISPOSTE);
+  }
+  if (sheet.getLastRow() > 0 && sheet.getRange(1, INTESTAZIONI.length).getValue() === '') {
+    sheet.getRange(1, 1, 1, INTESTAZIONI.length).setValues([INTESTAZIONI]).setFontWeight('bold').setBackground('#e5ecd8');
   }
   if (sheet.getLastRow() === 0) {
     sheet.appendRow(INTESTAZIONI);

@@ -108,6 +108,12 @@
     if (len > 8) city.style.fontSize = `min(${(88 / len).toFixed(1)}vw, ${(62 / len).toFixed(2)}rem)`;
   }
 
+  /* Pulsante di Charlino (usa il disegno definito una volta in index.html) */
+  const catButton = (id, cls) =>
+    `<button class="charlino ${cls}" type="button" data-charlino="${id}" aria-label="Hai trovato Charlino!">` +
+    '<svg viewBox="0 0 120 100" aria-hidden="true"><use href="#charlinoSvg"/></svg>' +
+    '<span class="charlino__bubble" aria-hidden="true">Miao!</span></button>';
+
   /* ------------------------------------------------------------------
      Divide i nomi in lettere per l'animazione d'ingresso
      ------------------------------------------------------------------ */
@@ -279,6 +285,10 @@
         </div>
       </figure>`).join('');
 
+    // Charlino sbuca da dietro la quinta foto (o l'ultima, se sono meno)
+    const hideout = $$('.photo__sway', line)[Math.min(4, W.foto.length - 1)];
+    if (hideout) hideout.insertAdjacentHTML('beforeend', catButton('foto', 'charlino--photo'));
+
     const photos = $$('.photo', line).map((el) => ({
       el,
       sway: $('.photo__sway', el),
@@ -377,7 +387,7 @@
     const paths = ['#threadShadow', '#threadBase', '#threadTwist'].map((s) => $(s));
     const mask = $('#threadMaskPath');
     const tip = $('#threadTip');
-    let xs = [], ys = [], ls = [], maxY = [], total = 1, drawn = 0, target = 0, ready = false;
+    let xs = [], ys = [], ls = [], maxY = [], total = 1, drawn = 0, target = 0, ready = false, tipPos = null;
 
     function collect() {
       const mr = main.getBoundingClientRect();
@@ -460,6 +470,7 @@
       const [x, y] = pointAt(drawn);
       tip.setAttribute('cx', x.toFixed(1));
       tip.setAttribute('cy', y.toFixed(1));
+      tipPos = [x, y];
       document.body.classList.toggle('is-threaded-end', drawn > total - 2);
     }
 
@@ -468,7 +479,7 @@
     new ResizeObserver(schedule).observe(main);
     addEventListener('resize', schedule);
     document.fonts && document.fonts.ready.then(schedule);
-    return { build, update };
+    return { build, update, tip: () => tipPos };
   }
 
   /* ------------------------------------------------------------------
@@ -509,8 +520,11 @@
         const a = -Math.PI / 2 + (Math.random() - .5) * (extra.spread || 2.2);
         const sp = 7 + Math.random() * (extra.power || 13);
         parts.push({
-          x: x + (Math.random() - .5) * 30, y: y + (Math.random() - .5) * 20,
-          vx: Math.cos(a) * sp, vy: Math.sin(a) * sp,
+          // rain: chicchi che cadono dall'alto su tutto lo schermo (lancio "scuotendo" il telefono)
+          x: extra.rain ? Math.random() * innerWidth : x + (Math.random() - .5) * 30,
+          y: extra.rain ? -10 - Math.random() * 80 : y + (Math.random() - .5) * 20,
+          vx: extra.rain ? (Math.random() - .5) * 3 : Math.cos(a) * sp,
+          vy: extra.rain ? 1 + Math.random() * 5 : Math.sin(a) * sp,
           rot: Math.random() * 6.28, vr: (Math.random() - .5) * .4,
           s: 1.6 + Math.random() * 1.6,
           c: Math.random() < .08 ? '#d42a3c' : colors[i % colors.length],
@@ -709,8 +723,10 @@
   /* ------------------------------------------------------------------
      7. RSVP
      ------------------------------------------------------------------ */
-  function rsvp() {
+  function rsvp(filo) {
     const form = $('#rsvpForm');
+    const filoCheck = $('#filoCheck');
+    filoCheck.hidden = true;
     const ifYes = $('#ifYes');
     const err = $('#rsvpError');
     const btn = $('#rsvpSend');
@@ -720,7 +736,10 @@
     try { if (localStorage.getItem(KEY)) $('#rsvpAlready').hidden = false; } catch (_) { /* niente storage */ }
 
     form.addEventListener('change', (e) => {
-      if (e.target.name === 'partecipa') ifYes.classList.toggle('is-open', e.target.value === 'si');
+      if (e.target.name === 'partecipa') {
+        ifYes.classList.toggle('is-open', e.target.value === 'si');
+        filoCheck.hidden = e.target.value !== 'si';
+      }
       if (e.target.closest('.field')) e.target.closest('.field').classList.remove('is-invalid');
     });
     form.addEventListener('input', (e) => e.target.closest('.field') && e.target.closest('.field').classList.remove('is-invalid'));
@@ -747,6 +766,7 @@
         contatto: fd.get('contatto').trim(),
         allergie: answer === 'si' ? fd.get('allergie') : '',
         messaggio: fd.get('messaggio'),
+        filo: answer === 'si' && fd.get('filo') ? 'Sì' : 'No',
         inviato: new Date().toLocaleString('it-IT', { timeZone: TZ }),
       };
 
@@ -769,6 +789,7 @@
           console.warn('[RSVP] Nessun endpoint configurato in assets/js/config.js — risposta non inviata:', payload);
         }
         try { localStorage.setItem(KEY, JSON.stringify(payload)); } catch (_) { /* ok */ }
+        if (payload.filo === 'Sì') filo.add(payload.nome); else filo.remove();
         sent(answer === 'si', payload.nome.split(' ')[0]);
       } catch (ex) {
         console.error(ex);
@@ -792,6 +813,7 @@
           ? `Grazie ${nome}! Da adesso il filo rosso passa anche da te. Ci vediamo il ${fmt({ day: 'numeric', month: 'long' })}.`
           : `Grazie ${nome} per avercelo fatto sapere. Brinderemo anche alla tua salute!`;
         done.hidden = false;
+        $('#rsvpShake').hidden = !yes;
         if (yes) {
           const r = done.getBoundingClientRect();
           Rice(innerWidth * .25, r.top + 40, 110);
@@ -813,7 +835,7 @@
      ------------------------------------------------------------------ */
   function guide() {
     const btn = $('#guide');
-    const stops = ['#filo', '#foto', '#data', '#countdown', '#luogo', '#rsvp', '#fine'].map((s) => $(s));
+    const stops = ['#filo', '#foto', '#data', '#countdown', '#luogo', '#rsvp', '#tutti', '#fine'].map((s) => $(s));
     const top = (el) => el.getBoundingClientRect().top + scrollY;
 
     btn.addEventListener('click', () => {
@@ -842,6 +864,284 @@
       }, 3200);
     };
     return { update, autoStart };
+  }
+
+  /* ------------------------------------------------------------------
+     Il filo di tutti: i nomi di chi ha confermato, letti dal Foglio Google
+     ------------------------------------------------------------------ */
+  function everyone() {
+    const list = $('#knots');
+    const empty = $('#knotsEmpty');
+    const sub = $('#tuttiSub');
+    const subText = sub.textContent;
+    const KEY = 'sl-filo-mio';
+    let names = [];
+
+    // "mario rossi" → "Mario R.": su un sito pubblico non mostriamo il cognome intero
+    const short = (full) => {
+      const p = full.trim().split(/\s+/);
+      const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+      return p.length > 1 ? `${cap(p[0])} ${p[p.length - 1].charAt(0).toUpperCase()}.` : cap(p[0]);
+    };
+    const mine = () => { try { return localStorage.getItem(KEY); } catch (_) { return null; } };
+
+    const render = (highlight) => {
+      list.innerHTML = '';
+      names.forEach((n, i) => {
+        const li = document.createElement('li');
+        li.className = 'knot-tag' + (n === highlight ? ' is-new' : '');
+        li.style.setProperty('--tilt', `${((i * 53) % 9) - 4}deg`);
+        li.textContent = n;
+        list.appendChild(li);
+      });
+      empty.hidden = names.length > 0;
+      sub.textContent = names.length
+        ? `${names.length} ${names.length === 1 ? 'nodo' : 'nodi'} sul filo, e il filo continua.`
+        : subText;
+    };
+
+    const merge = (fromSheet) => {
+      const set = [...new Set(fromSheet)];
+      const m = mine();
+      if (m && !set.includes(m)) set.push(m);
+      names = set;
+      render();
+    };
+
+    // JSONP: lo script Google risponde con una funzione, così funziona da qualunque sito
+    const load = () => {
+      if (!/script\.google/.test(W.rsvp.endpoint || '')) return merge([]);
+      const cb = `__filo${Date.now()}`;
+      const s = document.createElement('script');
+      let done = false;
+      const finish = (arr) => { if (done) return; done = true; delete window[cb]; s.remove(); merge(arr); };
+      window[cb] = (data) => finish(Array.isArray(data && data.nomi) ? data.nomi.map(String) : []);
+      s.onerror = () => finish([]);
+      setTimeout(() => finish([]), 8000);
+      s.src = `${W.rsvp.endpoint}?azione=filo&callback=${cb}`;
+      document.head.appendChild(s);
+    };
+    load();
+
+    return {
+      add(full) {
+        const n = short(full);
+        try { localStorage.setItem(KEY, n); } catch (_) { /* ok */ }
+        if (!names.includes(n)) names.push(n);
+        render(n);
+      },
+      remove() {
+        const m = mine();
+        try { localStorage.removeItem(KEY); } catch (_) { /* ok */ }
+        if (m) { names = names.filter((n) => n !== m); render(); }
+      },
+    };
+  }
+
+  /* ------------------------------------------------------------------
+     Scuoti il telefono per lanciare il riso
+     ------------------------------------------------------------------ */
+  function shake() {
+    const btns = $$('.js-shake');
+    const touch = matchMedia('(pointer: coarse)').matches;
+    const label = (t) => btns.forEach((b) => ($('.js-shake-label', b).textContent = t));
+    if (!touch) label('Clicca qui per lanciare il riso');
+
+    let listening = false, prev = null, last = 0;
+    const onMotion = (e) => {
+      const a = e.accelerationIncludingGravity || e.acceleration;
+      if (!a || a.x == null) return;
+      if (prev) {
+        const d = Math.abs(a.x - prev.x) + Math.abs(a.y - prev.y) + Math.abs(a.z - prev.z);
+        const now = performance.now();
+        if (d > 16 && now - last > 200) { last = now; Rice(0, 0, Math.min(240, 40 + d * 4), { rain: true }); }
+      }
+      prev = { x: a.x, y: a.y, z: a.z };
+    };
+    const listen = () => { if (!listening) { listening = true; addEventListener('devicemotion', onMotion); } };
+    const needsPermission = typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function';
+    if (touch && !needsPermission && 'DeviceMotionEvent' in window) listen(); // Android: niente permesso da chiedere
+
+    btns.forEach((b) => b.addEventListener('click', async () => {
+      Rice(0, 0, 170, { rain: true });
+      if (!touch) return;
+      try {
+        if (needsPermission && (await DeviceMotionEvent.requestPermission()) === 'granted') listen();
+      } catch (_) { /* permesso negato: resta il tocco */ }
+      if (listening) label('Scuoti ancora!');
+    }));
+  }
+
+  /* ------------------------------------------------------------------
+     Caccia a Charlino: tre nascondigli, un messaggio segreto
+     ------------------------------------------------------------------ */
+  function charlino() {
+    const KEY = 'sl-charlino';
+    const TOTAL = 3;
+    const toast = $('#catToast');
+    const secret = $('#secret');
+    let found = new Set();
+    try { found = new Set(JSON.parse(localStorage.getItem(KEY) || '[]')); } catch (_) { /* ok */ }
+    let toastTimer = 0;
+
+    $('#secretText').textContent = (W.charlino && W.charlino.messaggio) || '';
+    $('#secretPrize').textContent = (W.charlino && W.charlino.premio) || '';
+
+    const showToast = (msg) => {
+      toast.textContent = msg;
+      toast.hidden = false;
+      toast.classList.remove('is-in'); void toast.offsetWidth; toast.classList.add('is-in');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('is-in'), 2600);
+    };
+    const openSecret = () => {
+      secret.hidden = false;
+      requestAnimationFrame(() => secret.classList.add('is-open'));
+      $('#secretClose').focus({ preventScroll: true });
+      Rice(innerWidth / 2, innerHeight * .6, 160);
+    };
+    const closeSecret = () => {
+      secret.classList.remove('is-open');
+      setTimeout(() => (secret.hidden = true), 400);
+    };
+    $('#secretClose').addEventListener('click', closeSecret);
+    secret.addEventListener('click', (e) => { if (e.target === secret) closeSecret(); });
+    addEventListener('keydown', (e) => { if (e.key === 'Escape' && !secret.hidden) closeSecret(); });
+
+    $$('[data-charlino]').forEach((cat) => {
+      const id = cat.dataset.charlino;
+      if (found.has(id)) cat.classList.add('is-found');
+      // non far girare la cartolina né grattare il biglietto
+      cat.addEventListener('keydown', (e) => e.stopPropagation());
+      cat.addEventListener('pointerdown', (e) => e.stopPropagation());
+      cat.addEventListener('click', (e) => {
+        e.stopPropagation();
+        cat.classList.remove('is-meow'); void cat.offsetWidth; cat.classList.add('is-meow', 'is-found');
+        const isNew = !found.has(id);
+        found.add(id);
+        try { localStorage.setItem(KEY, JSON.stringify([...found])); } catch (_) { /* ok */ }
+        navigator.vibrate && navigator.vibrate(25);
+        if (found.size >= TOTAL) {
+          showToast(isNew ? 'Charlino trovato 3 di 3!' : 'Hai già trovato tutti i nascondigli');
+          setTimeout(openSecret, isNew ? 900 : 300);
+        } else {
+          showToast(isNew
+            ? `Charlino trovato: ${found.size} di ${TOTAL}. Dove saranno gli altri?`
+            : `Qui l'hai già scovato: ${found.size} di ${TOTAL}`);
+        }
+      });
+    });
+  }
+
+  /* ------------------------------------------------------------------
+     Il carillon: una nota a ogni pezzetto di pagina scorsa
+     ------------------------------------------------------------------ */
+  const Carillon = (() => {
+    const cfg = W.carillon || {};
+    const SEMI = { C: 0, 'C#': 1, Db: 1, D: 2, 'D#': 3, Eb: 3, E: 4, F: 5, 'F#': 6, Gb: 6, G: 7, 'G#': 8, Ab: 8, A: 9, 'A#': 10, Bb: 10, B: 11 };
+    const seq = [];
+    let beat = 0;
+    String(cfg.note || '').trim().split(/\s+/).filter(Boolean).forEach((tok) => {
+      const [n, d] = tok.split(':');
+      const m = /^([A-G](?:#|b)?)(\d)$/.exec(n);
+      if (m) seq.push({ at: beat, f: 440 * Math.pow(2, (SEMI[m[1]] + (m[2] - 4) * 12 - 9) / 12) });
+      beat += parseFloat(d) || 1;
+    });
+    const length = beat || 1;
+    const PX_PER_BEAT = 80;
+    const btn = $('#sound');
+
+    let on = cfg.attivo !== false && seq.length > 0;
+    try { const saved = localStorage.getItem('sl-sound'); if (saved && seq.length) on = saved === 'on'; } catch (_) { /* ok */ }
+    let ctx = null, master = null, pos = -0.01, lastY = scrollY;
+
+    const paintBtn = () => {
+      btn.hidden = !seq.length;
+      btn.setAttribute('aria-pressed', String(on));
+      btn.setAttribute('aria-label', `Musica del carillon: ${on ? 'attiva' : 'spenta'}`);
+      btn.classList.toggle('is-off', !on);
+    };
+
+    const unlock = () => {
+      if (!on) return;
+      if (ctx) { if (ctx.state === 'suspended') ctx.resume(); return; }
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      ctx = new AC();
+      master = ctx.createGain();
+      master.gain.value = 0.16;
+      master.connect(ctx.destination);
+      try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (_) { /* ok */ }
+    };
+    // l'audio si può accendere solo dopo un gesto: il primo tocco (il sigillo) basta
+    ['pointerdown', 'touchend', 'keydown'].forEach((ev) => addEventListener(ev, unlock, { passive: true }));
+
+    // suono di carillon: fondamentale + armoniche leggermente stonate, attacco secco e coda lunga
+    const ping = (f, when) => {
+      const t = ctx.currentTime + when;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(1, t + 0.004);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 1.8);
+      g.connect(master);
+      [[1, 1], [2.01, .32], [3.02, .12], [4.17, .06]].forEach(([h, v]) => {
+        const o = ctx.createOscillator();
+        const og = ctx.createGain();
+        o.type = 'sine';
+        o.frequency.value = f * h;
+        og.gain.value = v;
+        o.connect(og).connect(g);
+        o.start(t);
+        o.stop(t + 1.9);
+      });
+    };
+
+    btn.addEventListener('click', () => {
+      on = !on;
+      try { localStorage.setItem('sl-sound', on ? 'on' : 'off'); } catch (_) { /* ok */ }
+      if (on) { unlock(); if (ctx) ping(seq[0].f, 0); }
+      paintBtn();
+    });
+    paintBtn();
+
+    return {
+      update(onNote) {
+        const y = scrollY;
+        const dy = Math.abs(y - lastY);
+        lastY = y;
+        if (!dy || !on || !ctx || ctx.state !== 'running') return;
+        const prev = pos;
+        pos += dy / PX_PER_BEAT;
+        const hits = [];
+        for (const n of seq) {
+          const t = n.at + length * (Math.floor((prev - n.at) / length) + 1); // prossima volta dopo prev
+          if (t <= pos) hits.push([t, n.f]);
+        }
+        hits.sort((a, b) => a[0] - b[0]);
+        // uno scroll velocissimo non deve diventare un grappolo di note: ne suonano al massimo tre
+        hits.slice(-3).forEach(([, f], i) => { ping(f, i * 0.07); onNote && onNote(); });
+      },
+    };
+  })();
+
+  /* Note che volano via dalla punta del filo quando il carillon suona */
+  function noteFrom(T) {
+    const main = $('#main');
+    let lastAt = 0;
+    return () => {
+      const now = performance.now();
+      const p = T.tip();
+      if (!p || now - lastAt < 90) return;
+      lastAt = now;
+      const el = document.createElement('span');
+      el.className = 'note-float';
+      el.textContent = Math.random() < .5 ? '♪' : '♫';
+      el.style.left = `${p[0]}px`;
+      el.style.top = `${p[1]}px`;
+      el.style.setProperty('--dx', `${(Math.random() - .5) * 60}px`);
+      main.appendChild(el);
+      setTimeout(() => el.remove(), 1600);
+    };
   }
 
   /* ------------------------------------------------------------------
@@ -886,19 +1186,24 @@
     const swayUpdate = gallery();
     const T = thread();
     const G = guide();
+    const filo = everyone();
+    const onNote = noteFrom(T);
     dust();
     scratchCards(() => $('#countdown').classList.remove('is-locked'));
     countdown();
     calendar();
     postcard();
-    rsvp();
+    rsvp(filo);
     reveals();
+    shake();
+    charlino();
 
     const loop = () => {
       legendUpdate();
       swayUpdate();
       T.update();
       G.update();
+      Carillon.update(onNote);
       requestAnimationFrame(loop);
     };
 

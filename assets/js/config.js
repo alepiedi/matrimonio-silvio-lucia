@@ -35,6 +35,22 @@ window.WEDDING = {
     email: '',
   },
 
+  // Caccia a Charlino: si sblocca trovando il gatto nei suoi tre nascondigli
+  charlino: {
+    messaggio: 'Charlino non si fa trovare da tutti: se ci sei riuscito, vuol dire che ci conosci davvero bene.',
+    premio: 'Al matrimonio cerca Silvio e Lucia e di’ la parola d’ordine «Charlino»: c’è un brindisi speciale per te.',
+  },
+
+  // Carillon: suona mentre si scorre. Note nel formato NOTA:durata (in battiti), separate da spazi.
+  // Melodia: Coro nuziale di Wagner (pubblico dominio). "-" = pausa.
+  carillon: {
+    attivo: true,
+    note: 'C5:1 F5:1.5 F5:.5 F5:2 C5:1 G5:1.5 E5:.5 F5:2 ' +
+          'C5:1 F5:1 Bb5:1.5 Bb5:.5 A5:1 G5:1.5 F5:.5 E5:1 F5:1 G5:2 -:1 ' +
+          'C5:1 F5:1.5 F5:.5 F5:2 C5:1 G5:1.5 E5:.5 F5:2 ' +
+          'C5:1 F5:1 A5:1.5 F5:.5 C6:1 A5:1 F5:1 G5:1 F5:3 -:2',
+  },
+
   // Foto appese al filo rosso (consigliato: 6–8 foto verticali, ~1000px di lato lungo)
   foto: [
     { src: 'assets/img/photos/01-prime-foto-2019.jpg', didascalia: 'Una delle prime, 2019' },

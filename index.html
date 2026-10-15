@@ -52,6 +52,43 @@
     <p class="intro__hint" id="introHint">Tieni premuto il sigillo</p>
   </div>
 
+  <!-- Charlino, il gatto: disegnato una volta e riusato nei nascondigli -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="charlinoSvg" viewBox="0 0 120 100">
+      <path d="M22 44 L30 6 L50 30 Z" fill="#7d838d"/><path d="M98 44 L90 6 L70 30 Z" fill="#7d838d"/>
+      <path d="M29 36 L33 15 L44 30 Z" fill="#e6b3b3"/><path d="M91 36 L87 15 L76 30 Z" fill="#e6b3b3"/>
+      <ellipse cx="60" cy="58" rx="42" ry="34" fill="#8a909a"/>
+      <path d="M40 30 q8 6 6 14 M60 26 q2 8 0 14 M80 30 q-8 6 -6 14" stroke="#6f757e" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <ellipse cx="44" cy="56" rx="8" ry="9" fill="#e9d36a"/><ellipse cx="76" cy="56" rx="8" ry="9" fill="#e9d36a"/>
+      <ellipse class="charlino__pupil" cx="45" cy="57" rx="3" ry="7" fill="#22261f"/><ellipse class="charlino__pupil" cx="77" cy="57" rx="3" ry="7" fill="#22261f"/>
+      <path d="M56 68 h8 l-4 5 z" fill="#d98c8c"/>
+      <path d="M60 73 q-6 6 -11 2 M60 73 q6 6 11 2" stroke="#4b5058" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M18 64 h22 M20 72 h20 M102 64 h-22 M100 72 h-20" stroke="#d9dde2" stroke-width="1.6" stroke-linecap="round"/>
+      <ellipse cx="34" cy="92" rx="14" ry="9" fill="#8a909a"/><ellipse cx="86" cy="92" rx="14" ry="9" fill="#8a909a"/>
+      <path d="M28 92 v5 M34 93 v5 M40 92 v5 M80 92 v5 M86 93 v5 M92 92 v5" stroke="#6f757e" stroke-width="1.6" stroke-linecap="round"/>
+    </symbol>
+  </svg>
+
+  <!-- carillon: musica che suona mentre si scorre -->
+  <button class="sound" id="sound" type="button" aria-pressed="true" aria-label="Musica del carillon: attiva">
+    <span class="sound__icon" aria-hidden="true">♪</span><span class="sound__label">carillon</span>
+  </button>
+
+  <!-- contatore di Charlino -->
+  <div class="cat-toast" id="catToast" role="status" aria-live="polite" hidden></div>
+
+  <!-- messaggio segreto quando Charlino è stato trovato tre volte -->
+  <div class="secret" id="secret" role="dialog" aria-modal="true" aria-labelledby="secretTitle" hidden>
+    <div class="secret__card">
+      <svg class="secret__cat" viewBox="0 0 120 100" aria-hidden="true"><use href="#charlinoSvg"/></svg>
+      <p class="kicker">Messaggio segreto</p>
+      <h2 id="secretTitle">Hai trovato Charlino!</h2>
+      <p class="secret__text" id="secretText"></p>
+      <p class="secret__prize" id="secretPrize"></p>
+      <button class="btn" type="button" id="secretClose">Torna al sito</button>
+    </div>
+  </div>
+
   <!-- invito a scendere: compare quando si resta fermi -->
   <button class="guide" id="guide" type="button" aria-label="Scorri alla parte successiva">
     <span>Scorri</span><i aria-hidden="true">↓</i>
@@ -106,7 +143,7 @@
       <header class="section-head">
         <p class="kicker">Camera oscura</p>
         <h2>Sviluppo in corso<span class="dots">…</span></h2>
-        <p class="section-sub">Scorrete piano: i ricordi hanno bisogno di tempo per venire fuori.</p>
+        <p class="section-sub">Scorrete piano: i ricordi hanno bisogno di tempo per venire fuori.<br><span class="cat-hint">E occhio: Charlino si è nascosto tre volte nel sito. Trovatelo!</span></p>
       </header>
       <div class="line" id="line" data-thread-gallery></div>
     </section>
@@ -119,6 +156,8 @@
         <p class="section-sub">Prendete una moneta (o usate il dito) e grattate i tre bollini.</p>
       </header>
 
+      <div class="ticket-wrap">
+      <button class="charlino charlino--ticket" type="button" data-charlino="biglietto" aria-label="Hai trovato Charlino!"><svg viewBox="0 0 120 100" aria-hidden="true"><use href="#charlinoSvg"/></svg><span class="charlino__bubble" aria-hidden="true">Miao!</span></button>
       <div class="ticket" id="ticket">
         <div class="ticket__head">
           <span class="ticket__serial">Serie S·L — Nº <span data-bind="serial">170727</span></span>
@@ -147,6 +186,8 @@
         </div>
 
         <p class="ticket__foot">Premio non convertibile in denaro. Valido solo se accompagnato da un sorriso. Gioca con amore.</p>
+      </div>
+
       </div>
 
       <button class="link-btn" type="button" id="revealAll">Niente moneta? Mostratemi la data</button>
@@ -178,6 +219,7 @@
       <p class="hint hint--top" id="postcardHint"><span class="hint__icon" aria-hidden="true">↻</span> Toccate la cartolina per girarla e scoprire dove</p>
 
       <div class="postcard" id="postcard" tabindex="0" role="button" aria-pressed="false" aria-label="Gira la cartolina">
+        <button class="charlino charlino--postcard" type="button" data-charlino="cartolina" aria-label="Hai trovato Charlino!"><svg viewBox="0 0 120 100" aria-hidden="true"><use href="#charlinoSvg"/></svg><span class="charlino__bubble" aria-hidden="true">Miao!</span></button>
         <div class="postcard__inner">
           <div class="postcard__face postcard__front">
             <div class="pc-sky" aria-hidden="true">
@@ -224,7 +266,7 @@
     </section>
 
     <!-- ============ 7. RSVP ============ -->
-    <section class="rsvp" id="rsvp" data-thread="0.96,0.05; 0.97,0.55; 0.5,1.02">
+    <section class="rsvp" id="rsvp" data-thread="0.96,0.05; 0.97,0.6; 0.95,1">
       <header class="section-head">
         <p class="kicker">R.S.V.P.</p>
         <h2>Ci sarai?</h2>
@@ -269,6 +311,11 @@
           <textarea name="messaggio" rows="3"></textarea>
         </label>
 
+        <label class="check" id="filoCheck">
+          <input type="checkbox" name="filo" value="si" checked>
+          <span>Lega il mio nome al <em>filo di tutti</em> (si vedono solo nome e iniziale del cognome)</span>
+        </label>
+
         <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
 
         <p class="letter__error" id="rsvpError" role="alert" hidden></p>
@@ -288,11 +335,23 @@
       <div class="rsvp__done" id="rsvpDone" hidden>
         <p class="rsvp__done-big" id="rsvpDoneBig">Evviva!</p>
         <p class="rsvp__done-text" id="rsvpDoneText"></p>
+        <button class="btn shake-btn js-shake" type="button" id="rsvpShake" hidden><span class="js-shake-label">Scuoti il telefono per lanciare il riso</span></button>
         <button class="link-btn" type="button" id="rsvpAgain">Modifica la risposta</button>
       </div>
     </section>
 
-    <!-- ============ 8. IL NODO ============ -->
+    <!-- ============ 8. IL FILO DI TUTTI ============ -->
+    <section class="everyone" id="tutti" data-thread="0.97,0.12; 0.97,0.7; 0.5,1.04">
+      <header class="section-head">
+        <p class="kicker">Il filo di tutti</p>
+        <h2>Chi si è già legato</h2>
+        <p class="section-sub" id="tuttiSub">Ogni “Ci sarò!” è un nodo in più sul nostro filo.</p>
+      </header>
+      <ul class="knots" id="knots" aria-live="polite"></ul>
+      <p class="knots__empty" id="knotsEmpty" hidden>Il filo aspetta il primo nodo: rispondete qui sopra e legatevi per primi.</p>
+    </section>
+
+    <!-- ============ 9. IL NODO ============ -->
     <footer class="finale" id="fine">
       <svg class="knot" id="knot" viewBox="0 0 240 160" aria-hidden="true" data-thread="0.5,0.52">
         <path pathLength="1" d="M120 82 C 90 40, 30 30, 34 70 C 38 110, 96 100, 120 82 C 144 64, 202 54, 206 94 C 210 132, 150 124, 120 82" />
@@ -303,6 +362,7 @@
       <p class="finale__names"><span data-bind="lui">Silvio</span> <i>&amp;</i> <span data-bind="lei">Lucia</span></p>
       <p class="finale__date" data-bind="dataPunti">17 · 07 · 2027</p>
       <p class="finale__small">Non vediamo l’ora di festeggiare con voi.</p>
+      <button class="btn btn--ghost-light shake-btn js-shake" type="button"><span class="js-shake-label">Scuoti il telefono per lanciare il riso</span></button>
       <p class="finale__credit">Sito realizzato con amore da <a href="https://alessandropiedimonte.dev" target="_blank" rel="noopener">alessandropiedimonte.dev</a></p>
     </footer>
   </main>
