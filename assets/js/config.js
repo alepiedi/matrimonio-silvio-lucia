@@ -38,16 +38,17 @@ window.WEDDING = {
   },
 
   // Carillon: suona mentre si scorre. Note nel formato NOTA:durata (in battiti), separate da spazi.
-  // "-" = pausa. Melodia: ritornello di "Tití Me Preguntó" (Bad Bunny), trascritto a orecchio.
+  // "-" = pausa. Melodia: ritornello di "Annarè" (Gigi D'Alessio), preso dalla traccia
+  // della voce di un file MIDI e portato un'ottava sopra, in La bemolle maggiore.
   carillon: {
     attivo: true,
     note:
-      // Ti-tí me pre-gun-tó / si ten-go mu-chas no-vias, mu-chas no-vias
-      'E5:.5 E5:.5 E5:.5 D5:.5 C5:.5 D5:1 -:.5 ' +
-      'E5:.5 E5:.5 E5:.5 D5:.5 C5:.5 D5:.5 C5:1 A4:.5 C5:.5 C5:.5 A4:1 -:.5 ' +
-      // hoy ten-go a u-na, ma-ña-na o-tra / pe-ro no hay bo-da
-      'E5:.5 E5:.5 E5:.5 D5:.5 C5:1 D5:.5 D5:.5 E5:.5 D5:.5 C5:1 ' +
-      'A4:.5 C5:.5 D5:.5 E5:.5 D5:1 C5:1.5 -:1.5',
+      'C5:1.25 C5:0.5 C5:1 C5:1 C5:1.25 Db5:2 Db5:1 C5:1.25 Ab4:2 Bb4:1.25 C5:3 C5:1 ' +
+      'C5:1.25 C5:0.5 C5:1 C5:0.75 C5:1 Db5:3 Eb5:1 Ab4:1.75 Bb4:1 C5:3.25 C5:1 C5:1.25 ' +
+      'C5:0.75 C5:1 C5:0.75 C5:1 Bb4:3 C5:1.25 Bb4:1.75 G4:1.25 Ab4:3 Ab4:3 -:1 F5:1.25 ' +
+      'F5:0.5 F5:1 F5:1 F5:1 Eb5:2.75 F5:1.25 Eb5:2 Db5:2 C5:3.25 C5:1.25 C5:0.75 C5:1 ' +
+      'C5:1 Db5:1 Eb5:1.75 Bb4:1.5 C5:0.5 Bb4:0.25 Ab4:3 -:1 Ab4:1.25 Ab4:0.5 Ab4:1 Ab4:1 ' +
+      'Ab4:1 C5:2 Bb4:1 Ab4:1 C5:2 Bb4:1 C5:0.5 Bb4:0.5 Ab4:3 -:2',
   },
 
   // Foto appese al filo rosso (consigliato: 6–8 foto verticali, ~1000px di lato lungo)

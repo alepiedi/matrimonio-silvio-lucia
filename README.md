@@ -29,7 +29,7 @@ Niente framework e niente build: HTML, CSS e JavaScript puri. Funziona anche con
 - `rsvp.entro` → data limite per rispondere (vuoto = "Fatecelo sapere appena potete")
 - `foto` → elenco foto e didascalie
 - `charlino` → messaggio segreto e premio per chi trova il gatto tre volte
-- `carillon` → melodia che suona mentre si scorre (ora il ritornello di *Tití Me Preguntó*; note nel formato `NOTA:durata`)
+- `carillon` → melodia che suona mentre si scorre (ora il ritornello di *Annarè* di Gigi D'Alessio; note nel formato `NOTA:durata`)
 
 ### Foto
 1. Mettete le foto in `assets/img/photos/` (JPG verticali, circa 1000 px sul lato lungo, max ~300 KB ciascuna).

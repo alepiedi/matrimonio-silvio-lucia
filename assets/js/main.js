@@ -897,7 +897,7 @@
       beat += parseFloat(d) || 1;
     });
     const length = beat || 1;
-    const PX_PER_BEAT = 100;
+    const PX_PER_BEAT = 55; // il ritornello intero si sente in circa una discesa della pagina
     const btn = $('#sound');
 
     let on = cfg.attivo !== false && seq.length > 0;
