@@ -8,13 +8,13 @@ Un unico **filo rosso** (quello della leggenda: chi è destinato a incontrarsi �
 |---|---------|--------------|
 | 0 | **Busta con ceralacca** | Per aprire l'invito bisogna *tenere premuto* il sigillo, che si spezza in due |
 | 1 | **Nomi** | Il filo parte da Silvio, fa un cappio attorno alla "&" e scende verso Lucia |
-| 2 | **La leggenda** | Il testo si accende parola per parola mentre scorri |
-| 3 | **Camera oscura** | Le foto sono appese al filo con le mollette, dondolano quando scorri (e se le tocchi) e si *sviluppano* dal negativo al colore |
-| 4 | **Gratta & Sposa** | La data non è scritta: si scopre grattando tre bollini. Alla vincita parte il lancio del riso |
-| 5 | **Countdown** | Resta sfocato finché non hai grattato il biglietto. Pulsanti per aggiungere l'evento a Google Calendar / Apple / Outlook |
-| 6 | **Cartolina "Saluti da…"** | Cartolina vintage che si gira con indirizzo, francobollo, timbro e link a Maps |
-| 7 | **RSVP** | Lettera da compilare: all'invio arriva il timbro "RICEVUTO", la lettera vola via e parte il riso |
-| 8 | **Il nodo** | Il filo si chiude in un fiocco |
+| 2 | **Camera oscura** | Le foto sono appese al filo con le mollette, dondolano quando scorri (e se le tocchi) e si *sviluppano* dal negativo al colore |
+| 3 | **Gratta & Sposa** | Data e luogo non sono scritti: si scoprono grattando tre bollini (giorno, mese, dove). Alla vincita compaiono orario, indirizzo e link a Maps, e parte il lancio del riso |
+| 4 | **Countdown** | Resta sfocato finché non hai grattato il biglietto. Pulsanti per aggiungere l'evento a Google Calendar / Apple / Outlook |
+| 5 | **RSVP** | Lettera da compilare: all'invio arriva il timbro "RICEVUTO", la lettera vola via e parte il riso |
+| 6 | **Il nodo** | Il filo si chiude in un fiocco; pulsante per lanciare il riso scuotendo il telefono |
+
+In più: il **carillon** suona mentre si scorre (pulsante ♪ in alto a destra) e **Charlino** si nasconde tre volte (dietro una foto, il biglietto e la lettera): chi lo trova tutte e tre sblocca un messaggio segreto.
 
 Niente framework e niente build: HTML, CSS e JavaScript puri. Funziona anche con `prefers-reduced-motion` e da tastiera.
 
@@ -25,16 +25,15 @@ Niente framework e niente build: HTML, CSS e JavaScript puri. Funziona anche con
 **Si modifica solo `assets/js/config.js`**:
 
 - `data` → data del matrimonio (sabato 17 luglio 2027); `orario` → ora della cerimonia (17:30), vuoto = non mostrato
-- `luogo` → parola della cartolina (`saluti`), nome della location, indirizzo, link Maps
+- `luogo` → nome della location (`breve` è quello nel bollino del gratta e vinci), città, indirizzo, link Maps
 - `rsvp.entro` → data limite per rispondere (vuoto = "Fatecelo sapere appena potete")
 - `foto` → elenco foto e didascalie
 - `charlino` → messaggio segreto e premio per chi trova il gatto tre volte
-- `carillon` → melodia che suona mentre si scorre (note nel formato `NOTA:durata`)
+- `carillon` → melodia che suona mentre si scorre (ora il ritornello di *Tití Me Preguntó*; note nel formato `NOTA:durata`)
 
 ### Foto
 1. Mettete le foto in `assets/img/photos/` (JPG verticali, circa 1000 px sul lato lungo, max ~300 KB ciascuna).
 2. Aggiornate i percorsi in `config.js`, per esempio `{ src: 'assets/img/photos/mare.jpg', didascalia: 'Quella volta al mare' }`.
-3. Per le lettere della cartolina potete usare una foto panoramica del luogo (`luogo.foto`).
 
 ### Anteprima su WhatsApp
 `assets/img/og-image.jpg` è l'immagine che appare quando si condivide il link. È collegata tramite l'URL completo in `index.html` (`og:image`). Se cambiate indirizzo del sito, aggiornate anche quello.
@@ -77,6 +76,6 @@ index.html                 struttura delle sezioni
 assets/js/config.js        ← i dati da modificare
 assets/js/main.js          filo rosso, sigillo, gratta e vinci, riso, RSVP…
 assets/css/style.css       stile
-assets/img/                foto (segnaposto), cartolina, favicon, anteprima social
+assets/img/                foto, favicon, anteprima social
 tools/google-apps-script.gs  raccolta RSVP su Foglio Google
 ```

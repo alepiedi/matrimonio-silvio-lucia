@@ -131,13 +131,7 @@
       <span class="hero__exit" data-thread="0.5,0.2; 0.5,1"></span>
     </section>
 
-    <!-- ============ 2. LA LEGGENDA ============ -->
-    <section class="legend" id="filo" data-thread="0.93,0.05; 0.95,0.5; 0.9,0.95">
-      <p class="kicker">Il filo rosso</p>
-      <p class="legend__text" id="legendText">Un’antica leggenda racconta che chi è destinato a incontrarsi nasce legato da un filo rosso invisibile. Può allungarsi, aggrovigliarsi, tendersi fino all’impossibile — ma non si spezza mai. Il nostro ci ha portati fin qui. Adesso seguitelo voi.</p>
-    </section>
-
-    <!-- ============ 3. CAMERA OSCURA ============ -->
+    <!-- ============ 2. CAMERA OSCURA ============ -->
     <section class="darkroom" id="foto">
       <div class="darkroom__lamp" aria-hidden="true"></div>
       <header class="section-head">
@@ -148,12 +142,12 @@
       <div class="line" id="line" data-thread-gallery></div>
     </section>
 
-    <!-- ============ 4. GRATTA & SPOSA ============ -->
+    <!-- ============ 3. GRATTA & SPOSA (data e luogo) ============ -->
     <section class="luck" id="data" data-thread="0.985,0.3; 0.5,0.58; 0.015,0.72">
       <header class="section-head">
-        <p class="kicker">La data</p>
+        <p class="kicker">Data e luogo</p>
         <h2>Tentate la fortuna</h2>
-        <p class="section-sub">Prendete una moneta (o usate il dito) e grattate i tre bollini.</p>
+        <p class="section-sub">Prendete una moneta (o usate il dito) e grattate i tre bollini: quando e dove.</p>
       </header>
 
       <div class="ticket-wrap">
@@ -171,18 +165,21 @@
             <canvas aria-hidden="true"></canvas>
           </div>
           <div class="spot" data-spot>
-            <div class="spot__prize"><small>mese</small><strong data-bind="mese">luglio</strong><em>d’estate</em></div>
+            <div class="spot__prize"><small>mese</small><strong data-bind="mese">luglio</strong><em data-bind="anno">2027</em></div>
             <canvas aria-hidden="true"></canvas>
           </div>
           <div class="spot" data-spot>
-            <div class="spot__prize"><small>anno</small><strong data-bind="anno">2027</strong><em>per sempre</em></div>
+            <div class="spot__prize spot__prize--place"><small>dove</small><strong data-bind="luogoBreve">Case Gialle</strong><em data-bind="citta">Melizzano</em></div>
             <canvas aria-hidden="true"></canvas>
           </div>
         </div>
 
         <div class="ticket__win" id="ticketWin" aria-live="polite">
           <span class="ticket__win-big">Hai vinto!</span>
-          <span class="ticket__win-small">Un invito al nostro matrimonio · <span data-bind="dataLunga">sabato 17 luglio 2027</span></span>
+          <span class="ticket__win-small">Un invito al nostro matrimonio</span>
+          <span class="ticket__win-when"><span data-bind="dataLunga">sabato 17 luglio 2027</span><span id="winOra"> · ore <span data-bind="ora">17:30</span></span></span>
+          <span class="ticket__win-where"><span data-bind="luogoNome">Le Case Gialle</span>, <span data-bind="indirizzo">Melizzano (BN)</span></span>
+          <a class="btn btn--small ticket__maps" data-bind-href="maps" target="_blank" rel="noopener">Apri in Maps</a>
         </div>
 
         <p class="ticket__foot">Premio non convertibile in denaro. Valido solo se accompagnato da un sorriso. Gioca con amore.</p>
@@ -190,10 +187,10 @@
 
       </div>
 
-      <button class="link-btn" type="button" id="revealAll">Niente moneta? Mostratemi la data</button>
+      <button class="link-btn" type="button" id="revealAll">Niente moneta? Mostratemi data e luogo</button>
     </section>
 
-    <!-- ============ 5. COUNTDOWN ============ -->
+    <!-- ============ 4. COUNTDOWN ============ -->
     <section class="countdown is-locked" id="countdown" data-thread="0.06,0.1; 0.04,0.6; 0.2,1">
       <p class="kicker">Mancano</p>
       <div class="cd" aria-live="off">
@@ -209,64 +206,8 @@
       </div>
     </section>
 
-    <!-- ============ 6. CARTOLINA ============ -->
-    <section class="place" id="luogo" data-thread="0.015,0.3; 0.5,0.55; 0.985,0.82">
-      <header class="section-head">
-        <p class="kicker">Il luogo</p>
-        <h2>Vi aspettiamo qui</h2>
-      </header>
-
-      <p class="hint hint--top" id="postcardHint"><span class="hint__icon" aria-hidden="true">↻</span> Toccate la cartolina per girarla e scoprire dove</p>
-
-      <div class="postcard" id="postcard" tabindex="0" role="button" aria-pressed="false" aria-label="Gira la cartolina">
-        <button class="charlino charlino--postcard" type="button" data-charlino="cartolina" aria-label="Hai trovato Charlino!"><svg viewBox="0 0 120 100" aria-hidden="true"><use href="#charlinoSvg"/></svg><span class="charlino__bubble" aria-hidden="true">Miao!</span></button>
-        <div class="postcard__inner">
-          <div class="postcard__face postcard__front">
-            <div class="pc-sky" aria-hidden="true">
-              <span class="pc-sun"></span>
-              <svg class="pc-hills" viewBox="0 0 600 200" preserveAspectRatio="xMidYMax slice">
-                <path d="M0 120 Q80 70 160 105 T320 95 T470 80 T600 100 V200 H0Z" fill="#e9da8c" opacity=".8"/>
-                <path d="M0 150 Q100 105 210 140 T420 130 T600 140 V200 H0Z" fill="#a9bd8e"/>
-                <g class="pc-houses">
-                  <rect x="298" y="110" width="20" height="34" fill="#f1cf4f"/><path d="M295 111 L308 98 L321 111Z" fill="#c8713f"/>
-                  <rect x="318" y="118" width="40" height="26" fill="#f5d866"/><path d="M314 119 L338 102 L362 119Z" fill="#c8713f"/>
-                  <rect x="358" y="124" width="30" height="20" fill="#efc945"/><path d="M355 125 L373 112 L391 125Z" fill="#b9663a"/>
-                  <g fill="#5f7650"><rect x="304" y="118" width="7" height="8"/><rect x="326" y="126" width="7" height="8"/><rect x="343" y="126" width="7" height="8"/><rect x="333" y="134" width="9" height="10"/><rect x="368" y="130" width="8" height="7"/></g>
-                </g>
-                <path d="M0 175 Q140 150 290 172 T600 168 V200 H0Z" fill="#6f8a5e"/>
-                <g fill="#3e5034"><path d="M470 168 q4 -46 8 0z"/><path d="M486 170 q4 -58 8 0z"/><path d="M110 176 q4 -40 8 0z"/><path d="M262 150 q4 -44 8 0z"/></g>
-              </svg>
-            </div>
-            <span class="pc-greet" data-bind="salutiDa">Saluti dalle</span>
-            <span class="pc-city" data-bind="saluti">Case Gialle</span>
-            <span class="pc-venue" data-bind="citta">Melizzano</span>
-            <span class="pc-turn" aria-hidden="true">girami ↻</span>
-          </div>
-
-          <div class="postcard__face postcard__back">
-            <div class="pc-msg">
-              <p>Cari amici,</p>
-              <p>qui si mangia bene, si balla fino a tardi e, soprattutto, ci si sposa. Manchi solo tu.</p>
-              <p class="pc-sign"><span data-bind="lui">Silvio</span> &amp; <span data-bind="lei">Lucia</span></p>
-            </div>
-            <div class="pc-side">
-              <div class="pc-stamp" aria-hidden="true"><span>S&amp;L</span><small>2027</small></div>
-              <div class="pc-postmark" aria-hidden="true"><span data-bind="timbro">17 LUG 2027</span></div>
-              <div class="pc-addr">
-                <span data-bind="luogoNome">Le Case Gialle</span>
-                <span data-bind="indirizzo">Melizzano (BN)</span>
-                <span id="pcOra">ore <span data-bind="ora">16:30</span></span>
-              </div>
-              <a class="btn btn--small" data-bind-href="maps" target="_blank" rel="noopener" id="mapsLink">Apri in Maps</a>
-            </div>
-            <span class="pc-turn pc-turn--back" aria-hidden="true">↺ torna davanti</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ 7. RSVP ============ -->
-    <section class="rsvp" id="rsvp" data-thread="0.96,0.05; 0.97,0.6; 0.95,1">
+    <!-- ============ 5. RSVP ============ -->
+    <section class="rsvp" id="rsvp" data-thread="0.96,0.05; 0.97,0.6; 0.5,1.02">
       <header class="section-head">
         <p class="kicker">R.S.V.P.</p>
         <h2>Ci sarai?</h2>
@@ -274,6 +215,7 @@
       </header>
 
       <form class="letter" id="rsvpForm" novalidate>
+        <button class="charlino charlino--letter" type="button" data-charlino="lettera" aria-label="Hai trovato Charlino!"><svg viewBox="0 0 120 100" aria-hidden="true"><use href="#charlinoSvg"/></svg><span class="charlino__bubble" aria-hidden="true">Miao!</span></button>
         <p class="letter__already" id="rsvpAlready" hidden>Hai già risposto: puoi inviare di nuovo per modificare la tua risposta.</p>
 
         <fieldset class="choice">
@@ -311,11 +253,6 @@
           <textarea name="messaggio" rows="3"></textarea>
         </label>
 
-        <label class="check" id="filoCheck">
-          <input type="checkbox" name="filo" value="si" checked>
-          <span>Lega il mio nome al <em>filo di tutti</em> (si vedono solo nome e iniziale del cognome)</span>
-        </label>
-
         <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
 
         <p class="letter__error" id="rsvpError" role="alert" hidden></p>
@@ -340,18 +277,7 @@
       </div>
     </section>
 
-    <!-- ============ 8. IL FILO DI TUTTI ============ -->
-    <section class="everyone" id="tutti" data-thread="0.97,0.12; 0.97,0.7; 0.5,1.04">
-      <header class="section-head">
-        <p class="kicker">Il filo di tutti</p>
-        <h2>Chi si è già legato</h2>
-        <p class="section-sub" id="tuttiSub">Ogni “Ci sarò!” è un nodo in più sul nostro filo.</p>
-      </header>
-      <ul class="knots" id="knots" aria-live="polite"></ul>
-      <p class="knots__empty" id="knotsEmpty" hidden>Il filo aspetta il primo nodo: rispondete qui sopra e legatevi per primi.</p>
-    </section>
-
-    <!-- ============ 9. IL NODO ============ -->
+    <!-- ============ 6. IL NODO ============ -->
     <footer class="finale" id="fine">
       <svg class="knot" id="knot" viewBox="0 0 240 160" aria-hidden="true" data-thread="0.5,0.52">
         <path pathLength="1" d="M120 82 C 90 40, 30 30, 34 70 C 38 110, 96 100, 120 82 C 144 64, 202 54, 206 94 C 210 132, 150 124, 120 82" />

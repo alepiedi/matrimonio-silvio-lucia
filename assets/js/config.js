@@ -14,15 +14,11 @@ window.WEDDING = {
   durataOre: 10, // durata dell'evento in calendario, solo se c'è l'orario
 
   luogo: {
-    // Cartolina: frase piccola in corsivo + scritta gigante (ogni parola va su una riga)
-    salutiDa: 'Saluti dalle',
-    saluti: 'Case Gialle',
     nome: 'Le Case Gialle',
+    breve: 'Case Gialle', // quello che compare nel bollino del gratta e vinci
     citta: 'Melizzano',
     indirizzo: 'Melizzano (BN)',
     maps: 'https://www.google.com/maps/search/?api=1&query=Le+Case+Gialle+Melizzano',
-    // Immagine che riempie le lettere della cartolina (panorama del luogo)
-    foto: 'assets/img/luogo.svg',
   },
 
   rsvp: {
@@ -42,13 +38,16 @@ window.WEDDING = {
   },
 
   // Carillon: suona mentre si scorre. Note nel formato NOTA:durata (in battiti), separate da spazi.
-  // Melodia: Coro nuziale di Wagner (pubblico dominio). "-" = pausa.
+  // "-" = pausa. Melodia: ritornello di "Tití Me Preguntó" (Bad Bunny), trascritto a orecchio.
   carillon: {
     attivo: true,
-    note: 'C5:1 F5:1.5 F5:.5 F5:2 C5:1 G5:1.5 E5:.5 F5:2 ' +
-          'C5:1 F5:1 Bb5:1.5 Bb5:.5 A5:1 G5:1.5 F5:.5 E5:1 F5:1 G5:2 -:1 ' +
-          'C5:1 F5:1.5 F5:.5 F5:2 C5:1 G5:1.5 E5:.5 F5:2 ' +
-          'C5:1 F5:1 A5:1.5 F5:.5 C6:1 A5:1 F5:1 G5:1 F5:3 -:2',
+    note:
+      // Ti-tí me pre-gun-tó / si ten-go mu-chas no-vias, mu-chas no-vias
+      'E5:.5 E5:.5 E5:.5 D5:.5 C5:.5 D5:1 -:.5 ' +
+      'E5:.5 E5:.5 E5:.5 D5:.5 C5:.5 D5:.5 C5:1 A4:.5 C5:.5 C5:.5 A4:1 -:.5 ' +
+      // hoy ten-go a u-na, ma-ña-na o-tra / pe-ro no hay bo-da
+      'E5:.5 E5:.5 E5:.5 D5:.5 C5:1 D5:.5 D5:.5 E5:.5 D5:.5 C5:1 ' +
+      'A4:.5 C5:.5 D5:.5 E5:.5 D5:1 C5:1.5 -:1.5',
   },
 
   // Foto appese al filo rosso (consigliato: 6–8 foto verticali, ~1000px di lato lungo)

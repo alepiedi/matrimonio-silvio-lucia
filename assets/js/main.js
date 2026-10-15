@@ -74,16 +74,15 @@
       timbro: `${giorno} ${fmt({ month: 'short' }).replace('.', '').toUpperCase()} ${anno}`,
       ora: fmt({ hour: '2-digit', minute: '2-digit' }),
       serial: `${pad(giorno)}${meseNum}${anno.slice(2)}`,
-      saluti: W.luogo.saluti,
-      salutiDa: W.luogo.salutiDa || 'Saluti da',
       luogoNome: W.luogo.nome,
+      luogoBreve: W.luogo.breve || W.luogo.nome,
       citta: W.luogo.citta || W.luogo.indirizzo,
       indirizzo: W.luogo.indirizzo,
       entro: W.rsvp.entro
         ? new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(W.rsvp.entro + 'T12:00:00'))
         : null,
     };
-    if (!hasTime) $('#pcOra').remove();
+    if (!hasTime) $('#winOra').remove();
     if (!W.rsvp.entro) $('#rsvpBy').textContent = 'Fatecelo sapere appena potete.';
 
     $$('[data-bind]').forEach((el) => {
@@ -94,18 +93,6 @@
 
     document.title = `${W.lui} & ${W.lei} · Save the Date`;
     $$('.seal__half').forEach((h) => (h.dataset.mono = `${W.lui[0]}${W.lei[0]}`));
-    // assegnato direttamente (una variabile CSS risolverebbe il percorso rispetto al file CSS)
-    if (W.luogo.foto) $('.pc-city').style.backgroundImage = `url("${new URL(W.luogo.foto, location.href).href}")`;
-
-    // parola più lunga → riduco un po' il font della cartolina
-    // ogni parola su una riga; la dimensione dipende dalla parola più lunga
-    const city = $('.pc-city');
-    const words = W.luogo.saluti.trim().split(/\s+/);
-    city.innerHTML = words.map((w) => `<span>${w}</span>`).join('');
-    city.setAttribute('aria-label', W.luogo.saluti);
-    city.classList.toggle('pc-city--multi', words.length > 1);
-    const len = Math.max(...words.map((w) => w.length));
-    if (len > 8) city.style.fontSize = `min(${(88 / len).toFixed(1)}vw, ${(62 / len).toFixed(2)}rem)`;
   }
 
   /* Pulsante di Charlino (usa il disegno definito una volta in index.html) */
@@ -247,28 +234,7 @@
   }
 
   /* ------------------------------------------------------------------
-     2. Leggenda: le parole si accendono scorrendo
-     ------------------------------------------------------------------ */
-  function legend() {
-    const el = $('#legendText');
-    const HL = /^(filo|rosso|invisibile|mai|seguitelo)/i;
-    el.innerHTML = el.textContent
-      .split(/\s+/)
-      .map((w) => `<span class="w${HL.test(w) ? ' hl' : ''}">${w}</span>`)
-      .join(' ');
-    const words = $$('.w', el);
-
-    return () => {
-      const r = el.getBoundingClientRect();
-      const vh = innerHeight;
-      const p = clamp((vh * 0.82 - r.top) / (r.height + vh * 0.25), 0, 1);
-      const n = Math.round(p * words.length);
-      words.forEach((w, i) => w.classList.toggle('on', i < n));
-    };
-  }
-
-  /* ------------------------------------------------------------------
-     3. Camera oscura: foto appese al filo
+     2. Camera oscura: foto appese al filo
      ------------------------------------------------------------------ */
   function gallery() {
     const line = $('#line');
@@ -536,7 +502,7 @@
   })();
 
   /* ------------------------------------------------------------------
-     4. Gratta & Sposa
+     3. Gratta & Sposa (data e luogo)
      ------------------------------------------------------------------ */
   function scratchCards(onWin) {
     const ticket = $('#ticket');
@@ -625,7 +591,7 @@
   }
 
   /* ------------------------------------------------------------------
-     5. Countdown + calendario
+     4. Countdown + calendario
      ------------------------------------------------------------------ */
   function countdown() {
     const els = { d: $('#cdD'), h: $('#cdH'), m: $('#cdM'), s: $('#cdS') };
@@ -683,50 +649,10 @@
   }
 
   /* ------------------------------------------------------------------
-     6. Cartolina
+     5. RSVP
      ------------------------------------------------------------------ */
-  function postcard() {
-    const pc = $('#postcard');
-    const inner = $('.postcard__inner', pc);
-    const hint = $('#postcardHint');
-    const hintFront = hint.innerHTML;
-    let busy = false;
-
-    const swap = () => {
-      const on = pc.classList.toggle('is-flipped');
-      pc.setAttribute('aria-pressed', String(on));
-      hint.innerHTML = on
-        ? '<span class="hint__icon" aria-hidden="true">↺</span> Toccate di nuovo la cartolina per tornare davanti'
-        : hintFront;
-    };
-
-    // Niente "retro" 3D (su iPhone faceva vedere le scritte a specchio): la cartolina ruota
-    // fino a mettersi di taglio, a metà giro cambia faccia, poi si raddrizza dall'altro lato.
-    const flip = () => {
-      if (busy) return;
-      if (reduced) return swap();
-      busy = true;
-      pc.classList.add('is-turning');
-      setTimeout(() => {
-        swap();
-        pc.classList.add('is-landing');
-        pc.classList.remove('is-turning');
-        void inner.offsetWidth;
-        pc.classList.remove('is-landing');
-        setTimeout(() => (busy = false), 520);
-      }, 300);
-    };
-    pc.addEventListener('click', (e) => { if (!e.target.closest('a')) flip(); });
-    pc.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); } });
-  }
-
-  /* ------------------------------------------------------------------
-     7. RSVP
-     ------------------------------------------------------------------ */
-  function rsvp(filo) {
+  function rsvp() {
     const form = $('#rsvpForm');
-    const filoCheck = $('#filoCheck');
-    filoCheck.hidden = true;
     const ifYes = $('#ifYes');
     const err = $('#rsvpError');
     const btn = $('#rsvpSend');
@@ -736,10 +662,7 @@
     try { if (localStorage.getItem(KEY)) $('#rsvpAlready').hidden = false; } catch (_) { /* niente storage */ }
 
     form.addEventListener('change', (e) => {
-      if (e.target.name === 'partecipa') {
-        ifYes.classList.toggle('is-open', e.target.value === 'si');
-        filoCheck.hidden = e.target.value !== 'si';
-      }
+      if (e.target.name === 'partecipa') ifYes.classList.toggle('is-open', e.target.value === 'si');
       if (e.target.closest('.field')) e.target.closest('.field').classList.remove('is-invalid');
     });
     form.addEventListener('input', (e) => e.target.closest('.field') && e.target.closest('.field').classList.remove('is-invalid'));
@@ -766,7 +689,6 @@
         contatto: fd.get('contatto').trim(),
         allergie: answer === 'si' ? fd.get('allergie') : '',
         messaggio: fd.get('messaggio'),
-        filo: answer === 'si' && fd.get('filo') ? 'Sì' : 'No',
         inviato: new Date().toLocaleString('it-IT', { timeZone: TZ }),
       };
 
@@ -789,7 +711,6 @@
           console.warn('[RSVP] Nessun endpoint configurato in assets/js/config.js — risposta non inviata:', payload);
         }
         try { localStorage.setItem(KEY, JSON.stringify(payload)); } catch (_) { /* ok */ }
-        if (payload.filo === 'Sì') filo.add(payload.nome); else filo.remove();
         sent(answer === 'si', payload.nome.split(' ')[0]);
       } catch (ex) {
         console.error(ex);
@@ -835,7 +756,7 @@
      ------------------------------------------------------------------ */
   function guide() {
     const btn = $('#guide');
-    const stops = ['#filo', '#foto', '#data', '#countdown', '#luogo', '#rsvp', '#tutti', '#fine'].map((s) => $(s));
+    const stops = ['#foto', '#data', '#countdown', '#rsvp', '#fine'].map((s) => $(s));
     const top = (el) => el.getBoundingClientRect().top + scrollY;
 
     btn.addEventListener('click', () => {
@@ -857,85 +778,13 @@
       document.body.classList.toggle('is-idle', open && idle && !nearEnd);
     };
 
-    // La prima volta, se nessuno scorre, il sito scende da solo seguendo il filo fino alla leggenda
+    // La prima volta, se nessuno scorre, il sito scende da solo seguendo il filo fino alle foto
     const autoStart = () => {
       setTimeout(() => {
         if (scrollY < 5 && !Glide.active) Glide.to(top(stops[0]) - 8, 2600);
       }, 3200);
     };
     return { update, autoStart };
-  }
-
-  /* ------------------------------------------------------------------
-     Il filo di tutti: i nomi di chi ha confermato, letti dal Foglio Google
-     ------------------------------------------------------------------ */
-  function everyone() {
-    const list = $('#knots');
-    const empty = $('#knotsEmpty');
-    const sub = $('#tuttiSub');
-    const subText = sub.textContent;
-    const KEY = 'sl-filo-mio';
-    let names = [];
-
-    // "mario rossi" → "Mario R.": su un sito pubblico non mostriamo il cognome intero
-    const short = (full) => {
-      const p = full.trim().split(/\s+/);
-      const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
-      return p.length > 1 ? `${cap(p[0])} ${p[p.length - 1].charAt(0).toUpperCase()}.` : cap(p[0]);
-    };
-    const mine = () => { try { return localStorage.getItem(KEY); } catch (_) { return null; } };
-
-    const render = (highlight) => {
-      list.innerHTML = '';
-      names.forEach((n, i) => {
-        const li = document.createElement('li');
-        li.className = 'knot-tag' + (n === highlight ? ' is-new' : '');
-        li.style.setProperty('--tilt', `${((i * 53) % 9) - 4}deg`);
-        li.textContent = n;
-        list.appendChild(li);
-      });
-      empty.hidden = names.length > 0;
-      sub.textContent = names.length
-        ? `${names.length} ${names.length === 1 ? 'nodo' : 'nodi'} sul filo, e il filo continua.`
-        : subText;
-    };
-
-    const merge = (fromSheet) => {
-      const set = [...new Set(fromSheet)];
-      const m = mine();
-      if (m && !set.includes(m)) set.push(m);
-      names = set;
-      render();
-    };
-
-    // JSONP: lo script Google risponde con una funzione, così funziona da qualunque sito
-    const load = () => {
-      if (!/script\.google/.test(W.rsvp.endpoint || '')) return merge([]);
-      const cb = `__filo${Date.now()}`;
-      const s = document.createElement('script');
-      let done = false;
-      const finish = (arr) => { if (done) return; done = true; delete window[cb]; s.remove(); merge(arr); };
-      window[cb] = (data) => finish(Array.isArray(data && data.nomi) ? data.nomi.map(String) : []);
-      s.onerror = () => finish([]);
-      setTimeout(() => finish([]), 8000);
-      s.src = `${W.rsvp.endpoint}?azione=filo&callback=${cb}`;
-      document.head.appendChild(s);
-    };
-    load();
-
-    return {
-      add(full) {
-        const n = short(full);
-        try { localStorage.setItem(KEY, n); } catch (_) { /* ok */ }
-        if (!names.includes(n)) names.push(n);
-        render(n);
-      },
-      remove() {
-        const m = mine();
-        try { localStorage.removeItem(KEY); } catch (_) { /* ok */ }
-        if (m) { names = names.filter((n) => n !== m); render(); }
-      },
-    };
   }
 
   /* ------------------------------------------------------------------
@@ -1048,7 +897,7 @@
       beat += parseFloat(d) || 1;
     });
     const length = beat || 1;
-    const PX_PER_BEAT = 80;
+    const PX_PER_BEAT = 100;
     const btn = $('#sound');
 
     let on = cfg.attivo !== false && seq.length > 0;
@@ -1148,7 +997,7 @@
      Comparse allo scroll
      ------------------------------------------------------------------ */
   function reveals() {
-    const targets = [...$$('.section-head, .ticket, .postcard, .letter, .cd, .finale__names')];
+    const targets = [...$$('.section-head, .ticket, .letter, .cd, .finale__names')];
     targets.forEach((el) => el.classList.add('reveal'));
     const io = new IntersectionObserver((entries) => entries.forEach((e) => {
       if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
@@ -1182,24 +1031,20 @@
     lockHeroHeight();
     bindConfig();
     splitLetters();
-    const legendUpdate = legend();
     const swayUpdate = gallery();
     const T = thread();
     const G = guide();
-    const filo = everyone();
     const onNote = noteFrom(T);
     dust();
     scratchCards(() => $('#countdown').classList.remove('is-locked'));
     countdown();
     calendar();
-    postcard();
-    rsvp(filo);
+    rsvp();
     reveals();
     shake();
     charlino();
 
     const loop = () => {
-      legendUpdate();
       swayUpdate();
       T.update();
       G.update();
