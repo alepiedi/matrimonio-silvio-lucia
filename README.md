@@ -53,6 +53,24 @@ Se `endpoint` è vuoto ma `rsvp.email` è compilato, il sito apre l'app di posta
 
 ---
 
+## 🎁 Pagina del regalo: il viaggio di nozze in Giappone
+
+Pagina separata, raggiungibile dal **QR code** della partecipazione cartacea:
+**https://alepiedi.github.io/matrimonio-silvio-lucia/viaggio/**
+
+Mappa del Giappone con le tappe del viaggio: toccandone una, il filo rosso vola fin lì e compare una
+carta d'imbarco con **IBAN**, intestatari e causale già pronta (con pulsanti "Copia"). Tutte le tappe
+portano allo stesso conto; la pagina lo dice apertamente.
+
+- Si modifica solo **`viaggio/config.js`**: IBAN, intestatari, banca e tappe (nome, ideogrammi, posizione, testo).
+  ⚠️ L'IBAN attuale è un **segnaposto**.
+- QR code pronti per la stampa: `viaggio/qr/qr-viaggio.svg` (vettoriale, per la tipografia) e
+  `viaggio/qr/qr-viaggio.png` (1800×1800 px). Stamparlo almeno a **2 cm** di lato, lasciando il margine bianco.
+- La pagina non viene indicizzata dai motori di ricerca (`noindex`).
+- Se cambiate l'indirizzo del sito (es. un dominio vostro), **rigenerate il QR prima di stampare**.
+
+---
+
 ## 🚀 Pubblicare (GitHub Pages)
 
 1. Su GitHub: **Settings → Pages**
@@ -77,4 +95,5 @@ assets/js/main.js          filo rosso, sigillo, gratta e vinci, riso, RSVP…
 assets/css/style.css       stile
 assets/img/                foto, favicon, anteprima social
 tools/google-apps-script.gs  raccolta RSVP su Foglio Google
+viaggio/                   pagina del regalo (mappa del Giappone) + QR code
 ```
