@@ -14,7 +14,7 @@ Un unico **filo rosso** (quello della leggenda: chi è destinato a incontrarsi �
 | 5 | **RSVP** | Lettera da compilare: all'invio arriva il timbro "RICEVUTO", la lettera vola via e parte il riso |
 | 6 | **Il nodo** | Il filo si chiude in un fiocco; pulsante per lanciare il riso scuotendo il telefono |
 
-In più: il **carillon** suona mentre si scorre (pulsante ♪ in alto a destra) e **Charlino** si nasconde tre volte (dietro una foto, il biglietto e la lettera): chi lo trova tutte e tre sblocca un messaggio segreto.
+In più: **Charlino** si nasconde tre volte (dietro una foto, il biglietto e la lettera): chi lo trova tutte e tre sblocca un messaggio segreto.
 
 Niente framework e niente build: HTML, CSS e JavaScript puri. Funziona anche con `prefers-reduced-motion` e da tastiera.
 
@@ -29,7 +29,6 @@ Niente framework e niente build: HTML, CSS e JavaScript puri. Funziona anche con
 - `rsvp.entro` → data limite per rispondere (vuoto = "Fatecelo sapere appena potete")
 - `foto` → elenco foto e didascalie
 - `charlino` → messaggio segreto e premio per chi trova il gatto tre volte
-- `carillon` → melodia che suona mentre si scorre (ora il ritornello di *Annarè* di Gigi D'Alessio; note nel formato `NOTA:durata`)
 
 ### Foto
 1. Mettete le foto in `assets/img/photos/` (JPG verticali, circa 1000 px sul lato lungo, max ~300 KB ciascuna).

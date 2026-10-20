@@ -20,7 +20,7 @@
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Courier+Prime:wght@400;700&family=Pinyon+Script&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Courier+Prime:wght@400;700&family=Pinyon+Script&display=swap">
   <link rel="stylesheet" href="assets/css/style.css">
 
   <script src="assets/js/config.js"></script>
@@ -69,11 +69,6 @@
     </symbol>
   </svg>
 
-  <!-- carillon: musica che suona mentre si scorre -->
-  <button class="sound" id="sound" type="button" aria-pressed="true" aria-label="Musica del carillon: attiva">
-    <span class="sound__icon" aria-hidden="true">♪</span><span class="sound__label">carillon</span>
-  </button>
-
   <!-- contatore di Charlino -->
   <div class="cat-toast" id="catToast" role="status" aria-live="polite" hidden></div>
 
@@ -100,22 +95,13 @@
   <main id="main">
     <!-- IL FILO ROSSO: disegnato via JS sopra tutta la pagina -->
     <svg class="thread" id="thread" aria-hidden="true">
-      <defs>
-        <mask id="threadMask" maskUnits="userSpaceOnUse">
-          <path id="threadMaskPath" fill="none" stroke="#fff" stroke-width="14" stroke-linecap="round" />
-        </mask>
-      </defs>
-      <g mask="url(#threadMask)">
-        <path class="thread__shadow" id="threadShadow" />
-        <path class="thread__base" id="threadBase" />
-        <path class="thread__twist" id="threadTwist" />
-      </g>
-      <circle class="thread__tip" id="threadTip" r="4" />
+      <path class="thread__shadow" id="threadShadow" />
+      <path class="thread__base" id="threadBase" />
     </svg>
+    <span class="thread-tip" id="threadTip" aria-hidden="true"></span>
 
     <!-- ============ 1. HERO ============ -->
     <section class="hero" id="top" data-thread="-0.03,0.34; 0.12,0.40">
-      <canvas class="hero__dust" id="dust" aria-hidden="true"></canvas>
 
       <p class="eyebrow reveal-hero">Save the date · Estate <span data-bind="anno">2027</span></p>
 

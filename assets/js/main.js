@@ -189,51 +189,6 @@
   }
 
   /* ------------------------------------------------------------------
-     Polvere dorata nell'hero
-     ------------------------------------------------------------------ */
-  function dust() {
-    const cvs = $('#dust');
-    const ctx = cvs.getContext('2d');
-    const hero = $('.hero');
-    let w, h, dpr, parts = [], visible = true;
-
-    const resize = () => {
-      dpr = Math.min(devicePixelRatio || 1, 2);
-      w = hero.clientWidth; h = hero.clientHeight;
-      cvs.width = w * dpr; cvs.height = h * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const n = Math.round(clamp(w * h / 16000, 30, 90));
-      parts = Array.from({ length: n }, () => ({
-        x: Math.random() * w, y: Math.random() * h,
-        r: Math.random() * 1.8 + .4,
-        vy: -(Math.random() * .25 + .05), vx: (Math.random() - .5) * .15,
-        a: Math.random() * .6 + .2, p: Math.random() * Math.PI * 2,
-      }));
-    };
-
-    const loop = (t) => {
-      if (visible) {
-        ctx.clearRect(0, 0, w, h);
-        for (const q of parts) {
-          q.x += q.vx + Math.sin(t / 2000 + q.p) * .12;
-          q.y += q.vy;
-          if (q.y < -5) { q.y = h + 5; q.x = Math.random() * w; }
-          const tw = .5 + .5 * Math.sin(t / 700 + q.p * 3);
-          ctx.globalAlpha = q.a * tw;
-          ctx.fillStyle = '#b8914f';
-          ctx.beginPath(); ctx.arc(q.x, q.y, q.r, 0, 6.283); ctx.fill();
-        }
-      }
-      requestAnimationFrame(loop);
-    };
-
-    new IntersectionObserver(([e]) => (visible = e.isIntersecting)).observe(hero);
-    addEventListener('resize', resize);
-    resize();
-    if (!reduced) requestAnimationFrame(loop);
-  }
-
-  /* ------------------------------------------------------------------
      2. Camera oscura: foto appese al filo
      ------------------------------------------------------------------ */
   function gallery() {
@@ -290,7 +245,8 @@
         const force = -push * 0.035 - (p.angle - p.rest) * 0.035;
         p.vel = (p.vel + force) * 0.94;
         p.angle = clamp(p.angle + p.vel, -28, 28);
-        p.sway.style.transform = `rotate(${p.angle.toFixed(2)}deg)`;
+        const a = p.angle.toFixed(1);
+        if (a !== p.shown) { p.shown = a; p.sway.style.transform = `rotate(${a}deg)`; } // ferma: non riscrivo
       }
     };
   }
@@ -350,10 +306,12 @@
   function thread() {
     const main = $('#main');
     const svg = $('#thread');
-    const paths = ['#threadShadow', '#threadBase', '#threadTwist'].map((s) => $(s));
-    const mask = $('#threadMaskPath');
+    const paths = ['#threadShadow', '#threadBase'].map((s) => $(s));
     const tip = $('#threadTip');
-    let xs = [], ys = [], ls = [], maxY = [], total = 1, drawn = 0, target = 0, ready = false, tipPos = null;
+    let xs = [], ys = [], ls = [], maxY = [], total = 1, drawn = 0, target = 0, ready = false;
+    // valori letti una volta (al build o al resize), non a ogni fotogramma: leggere misure
+    // ogni volta costringe il browser a ricalcolare l'impaginazione
+    let mainTop = 0, docH = 0, lastY = -1, written = -1, ended = null;
 
     function collect() {
       const mr = main.getBoundingClientRect();
@@ -399,22 +357,22 @@
       maxY = [];
       ys.reduce((m, y, i) => (maxY[i] = Math.max(m, y)), -Infinity);
 
-      paths.forEach((p) => p.setAttribute('d', d));
-      mask.setAttribute('d', d);
-      mask.setAttribute('pathLength', total.toFixed(1));
-      mask.style.strokeDasharray = `${total} ${total + 10}`;
+      paths.forEach((p) => {
+        p.setAttribute('d', d);
+        p.setAttribute('pathLength', total.toFixed(1));
+        p.style.strokeDasharray = `${total} ${total + 10}`;
+      });
+      mainTop = main.getBoundingClientRect().top + scrollY;
+      docH = document.documentElement.scrollHeight;
       ready = true;
+      written = -1;
       update(true);
     }
 
     function targetFor() {
-      const doc = document.documentElement;
-      if (scrollY + innerHeight >= doc.scrollHeight - 4) return total;
-      const mainTop = main.getBoundingClientRect().top + scrollY;
-      // la punta sta in basso nello schermo; se si resta fermi, il filo "tira" verso giù
-      const idle = idleFor() > 1800 && !Glide.active;
-      const tug = idle ? 0.09 * (0.5 - 0.5 * Math.cos(performance.now() / 380)) : 0;
-      const tipY = scrollY + innerHeight * (0.74 + tug) - mainTop;
+      if (scrollY + innerHeight >= docH - 4) return total;
+      // la punta sta in basso nello schermo (quando si è fermi pulsa, solo via CSS)
+      const tipY = scrollY + innerHeight * 0.76 - mainTop;
       // primo campione oltre la "linea di lettura"
       let lo = 0, hi = maxY.length - 1;
       while (lo < hi) { const m = (lo + hi) >> 1; if (maxY[m] > tipY) hi = m; else lo = m + 1; }
@@ -429,15 +387,19 @@
 
     function update(snap) {
       if (!ready || !document.body.classList.contains('is-open')) return;
-      target = reduced ? total : targetFor();
-      drawn = snap === true && reduced ? target : drawn + (target - drawn) * 0.1;
+      // fermi e già disegnati: niente da fare in questo fotogramma
+      if (snap !== true && scrollY === lastY && drawn === target) return;
+      if (scrollY !== lastY || snap === true) { lastY = scrollY; target = reduced ? total : targetFor(); }
+      drawn = snap === true && reduced ? target : drawn + (target - drawn) * 0.12;
       if (Math.abs(target - drawn) < .5) drawn = target;
-      mask.style.strokeDashoffset = (total - drawn).toFixed(1);
+      if (Math.abs(drawn - written) < 0.4) return; // cambiamento invisibile: non ridisegno
+      written = drawn;
+      const off = (total - drawn).toFixed(1);
+      paths.forEach((p) => (p.style.strokeDashoffset = off));
       const [x, y] = pointAt(drawn);
-      tip.setAttribute('cx', x.toFixed(1));
-      tip.setAttribute('cy', y.toFixed(1));
-      tipPos = [x, y];
-      document.body.classList.toggle('is-threaded-end', drawn > total - 2);
+      tip.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`;
+      const end = drawn > total - 2;
+      if (end !== ended) { ended = end; document.body.classList.toggle('is-threaded-end', end); }
     }
 
     let t;
@@ -445,7 +407,7 @@
     new ResizeObserver(schedule).observe(main);
     addEventListener('resize', schedule);
     document.fonts && document.fonts.ready.then(schedule);
-    return { build, update, tip: () => tipPos };
+    return { build, update };
   }
 
   /* ------------------------------------------------------------------
@@ -462,6 +424,7 @@
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
     addEventListener('resize', resize); resize();
+    cvs.hidden = true;
 
     const loop = () => {
       ctx.clearRect(0, 0, innerWidth, innerHeight);
@@ -476,7 +439,8 @@
         ctx.beginPath(); ctx.ellipse(0, 0, p.s * 1.9, p.s * .75, 0, 0, 6.283); ctx.fill();
         ctx.restore();
       }
-      if (parts.length) requestAnimationFrame(loop); else { running = false; ctx.clearRect(0, 0, innerWidth, innerHeight); }
+      if (parts.length) requestAnimationFrame(loop);
+      else { running = false; ctx.clearRect(0, 0, innerWidth, innerHeight); cvs.hidden = true; } // tela spenta quando non serve
     };
 
     return (x, y, n = 150, extra = {}) => {
@@ -497,7 +461,7 @@
           life: 260,
         });
       }
-      if (!running) { running = true; requestAnimationFrame(loop); }
+      if (!running) { running = true; cvs.hidden = false; requestAnimationFrame(loop); }
     };
   })();
 
@@ -770,12 +734,16 @@
     document.addEventListener('focusin', (e) => (typing = /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)));
     document.addEventListener('focusout', () => (typing = false));
 
+    let docH = document.documentElement.scrollHeight, shown = null, idleCls = null;
+    new ResizeObserver(() => (docH = document.documentElement.scrollHeight)).observe($('#main'));
     const update = () => {
       const open = document.body.classList.contains('is-open');
       const idle = idleFor() > 1500 && !Glide.active;
-      const nearEnd = scrollY + innerHeight > document.documentElement.scrollHeight - innerHeight * 0.5;
-      btn.classList.toggle('is-visible', open && (idle || scrollY < 10) && !nearEnd && !typing);
-      document.body.classList.toggle('is-idle', open && idle && !nearEnd);
+      const nearEnd = scrollY + innerHeight > docH - innerHeight * 0.5;
+      const show = open && (idle || scrollY < 10) && !nearEnd && !typing;
+      const idleNow = open && idle && !nearEnd;
+      if (show !== shown) { shown = show; btn.classList.toggle('is-visible', show); }
+      if (idleNow !== idleCls) { idleCls = idleNow; document.body.classList.toggle('is-idle', idleNow); }
     };
 
     // La prima volta, se nessuno scorre, il sito scende da solo seguendo il filo fino alle foto
@@ -883,117 +851,6 @@
   }
 
   /* ------------------------------------------------------------------
-     Il carillon: una nota a ogni pezzetto di pagina scorsa
-     ------------------------------------------------------------------ */
-  const Carillon = (() => {
-    const cfg = W.carillon || {};
-    const SEMI = { C: 0, 'C#': 1, Db: 1, D: 2, 'D#': 3, Eb: 3, E: 4, F: 5, 'F#': 6, Gb: 6, G: 7, 'G#': 8, Ab: 8, A: 9, 'A#': 10, Bb: 10, B: 11 };
-    const seq = [];
-    let beat = 0;
-    String(cfg.note || '').trim().split(/\s+/).filter(Boolean).forEach((tok) => {
-      const [n, d] = tok.split(':');
-      const m = /^([A-G](?:#|b)?)(\d)$/.exec(n);
-      if (m) seq.push({ at: beat, f: 440 * Math.pow(2, (SEMI[m[1]] + (m[2] - 4) * 12 - 9) / 12) });
-      beat += parseFloat(d) || 1;
-    });
-    const length = beat || 1;
-    const PX_PER_BEAT = 55; // il ritornello intero si sente in circa una discesa della pagina
-    const btn = $('#sound');
-
-    let on = cfg.attivo !== false && seq.length > 0;
-    try { const saved = localStorage.getItem('sl-sound'); if (saved && seq.length) on = saved === 'on'; } catch (_) { /* ok */ }
-    let ctx = null, master = null, pos = -0.01, lastY = scrollY;
-
-    const paintBtn = () => {
-      btn.hidden = !seq.length;
-      btn.setAttribute('aria-pressed', String(on));
-      btn.setAttribute('aria-label', `Musica del carillon: ${on ? 'attiva' : 'spenta'}`);
-      btn.classList.toggle('is-off', !on);
-    };
-
-    const unlock = () => {
-      if (!on) return;
-      if (ctx) { if (ctx.state === 'suspended') ctx.resume(); return; }
-      const AC = window.AudioContext || window.webkitAudioContext;
-      if (!AC) return;
-      ctx = new AC();
-      master = ctx.createGain();
-      master.gain.value = 0.16;
-      master.connect(ctx.destination);
-      try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (_) { /* ok */ }
-    };
-    // l'audio si può accendere solo dopo un gesto: il primo tocco (il sigillo) basta
-    ['pointerdown', 'touchend', 'keydown'].forEach((ev) => addEventListener(ev, unlock, { passive: true }));
-
-    // suono di carillon: fondamentale + armoniche leggermente stonate, attacco secco e coda lunga
-    const ping = (f, when) => {
-      const t = ctx.currentTime + when;
-      const g = ctx.createGain();
-      g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(1, t + 0.004);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 1.8);
-      g.connect(master);
-      [[1, 1], [2.01, .32], [3.02, .12], [4.17, .06]].forEach(([h, v]) => {
-        const o = ctx.createOscillator();
-        const og = ctx.createGain();
-        o.type = 'sine';
-        o.frequency.value = f * h;
-        og.gain.value = v;
-        o.connect(og).connect(g);
-        o.start(t);
-        o.stop(t + 1.9);
-      });
-    };
-
-    btn.addEventListener('click', () => {
-      on = !on;
-      try { localStorage.setItem('sl-sound', on ? 'on' : 'off'); } catch (_) { /* ok */ }
-      if (on) { unlock(); if (ctx) ping(seq[0].f, 0); }
-      paintBtn();
-    });
-    paintBtn();
-
-    return {
-      update(onNote) {
-        const y = scrollY;
-        const dy = Math.abs(y - lastY);
-        lastY = y;
-        if (!dy || !on || !ctx || ctx.state !== 'running') return;
-        const prev = pos;
-        pos += dy / PX_PER_BEAT;
-        const hits = [];
-        for (const n of seq) {
-          const t = n.at + length * (Math.floor((prev - n.at) / length) + 1); // prossima volta dopo prev
-          if (t <= pos) hits.push([t, n.f]);
-        }
-        hits.sort((a, b) => a[0] - b[0]);
-        // uno scroll velocissimo non deve diventare un grappolo di note: ne suonano al massimo tre
-        hits.slice(-3).forEach(([, f], i) => { ping(f, i * 0.07); onNote && onNote(); });
-      },
-    };
-  })();
-
-  /* Note che volano via dalla punta del filo quando il carillon suona */
-  function noteFrom(T) {
-    const main = $('#main');
-    let lastAt = 0;
-    return () => {
-      const now = performance.now();
-      const p = T.tip();
-      if (!p || now - lastAt < 90) return;
-      lastAt = now;
-      const el = document.createElement('span');
-      el.className = 'note-float';
-      el.textContent = Math.random() < .5 ? '♪' : '♫';
-      el.style.left = `${p[0]}px`;
-      el.style.top = `${p[1]}px`;
-      el.style.setProperty('--dx', `${(Math.random() - .5) * 60}px`);
-      main.appendChild(el);
-      setTimeout(() => el.remove(), 1600);
-    };
-  }
-
-  /* ------------------------------------------------------------------
      Comparse allo scroll
      ------------------------------------------------------------------ */
   function reveals() {
@@ -1034,8 +891,6 @@
     const swayUpdate = gallery();
     const T = thread();
     const G = guide();
-    const onNote = noteFrom(T);
-    dust();
     scratchCards(() => $('#countdown').classList.remove('is-locked'));
     countdown();
     calendar();
@@ -1048,7 +903,6 @@
       swayUpdate();
       T.update();
       G.update();
-      Carillon.update(onNote);
       requestAnimationFrame(loop);
     };
 
